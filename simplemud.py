@@ -30,12 +30,24 @@ rooms = {
         "exits": { "outside": "Outside" },
     },
     "Outside": {
-        "description": "You're standing outside a tavern. It's raining.",
+        "description": "You're standing outside and there is a tavern to your right and a mansion down the street. It's raining.",
         "exits": { "inside": "Tavern", "mansion": "Mansion" },
     },
     "Mansion": {
-        "description": "You're inside a creepy four-story mansion.",
-        "exits": {"outside": "Outside"},
+        "description": "You're on the first floor of a creepy four-story mansion.",
+        "exits": {"outside": "Outside", "floor2": "Floor2"},
+    },
+    "Floor2": {
+        "description": "You're on the second floor and filled with self doubt.",
+        "exits": {"floor1": "mansion", "floor3": "Floor3"},
+    },
+    "Floor3": {
+        "description": "You're now on floor three and have serious doubts about this place.",
+        "exits": {"floor2": "Floor2", "floor4": "Floor4"},
+    },
+    "Floor4": {
+        "description": "You're now on the top floor. A nightmarish phantom is approaching.",
+        "exits": {"floor3": "Floor3", "service elevator": "Mansion"}
     }
 }
 
@@ -123,7 +135,7 @@ while True:
             mud.send_message(id,"Commands:")
             mud.send_message(id,"  say <message>  - Says something out loud, e.g. 'say Hello'")
             mud.send_message(id,"  look           - Examines the surroundings, e.g. 'look'")
-            mud.send_message(id,"  go <exit>      - Moves through the exit specified, e.g. 'go outside'")
+            mud.send_message(id,"  enter <exit>      - Moves through the exit specified, e.g. 'enter outside'")
 
         # 'say' command
         elif command == "say":
@@ -159,7 +171,7 @@ while True:
             mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
 
         # 'go' command
-        elif command == "go":
+        elif command == "enter":
 
             # store the exit name
             ex = params.lower()
