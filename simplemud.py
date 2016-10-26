@@ -3,7 +3,7 @@ A simple Multi-User Dungeon (MUD) game. Players can talk to each other, examine
 their surroundings and move between rooms.
 
 Some ideas for things to try adding:
-    * More rooms to explore
+    * More rooms to explore!
     * An 'emote' command e.g. 'emote laughs out loud' -> 'Mark laughs out loud'
     * A 'whisper' command for talking to individual players
     * A 'shout' command for yelling to players in all rooms

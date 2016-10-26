@@ -1,15 +1,15 @@
 rooms = {
     "Tavern": {
         "description": "You're in a cozy tavern warmed by an open fire.",
-        "exits": { "outside": "Outside" },
+        "exits": { "outside": "Town" },
     },
-    "Outside": {
+    "Town": {
         "description": "You're standing outside and there is a tavern to your right and a mansion down the street. It's raining.",
         "exits": { "inside": "Tavern", "mansion": "Mansion" },
     },
     "Mansion": {
         "description": "You're on the first floor of a creepy four-story mansion.",
-        "exits": {"outside": "Outside", "floor2": "Floor2"},
+        "exits": {"outside": "Town", "floor2": "Floor2"},
     },
     "Floor2": {
         "description": "You're on the second floor and filled with self doubt.",
