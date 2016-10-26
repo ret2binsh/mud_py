@@ -78,7 +78,7 @@ while True:
         # 'Tavern' room.
         # Try adding more player stats - level, gold, inventory, etc
         players[id] = {
-            "name": None,
+            "name": "blank",
             "room": "Tavern",
         }
 
@@ -110,7 +110,7 @@ while True:
         if id not in players: continue
 
         # if the player hasn't given their name yet, use this first command as their name
-        if players[id]["name"] is None:
+        if players[id]["name"] == "blank":
 
             players[id]["name"] = command
 
@@ -120,7 +120,7 @@ while True:
                 mud.send_message(pid,"%s entered the game" % players[id]["name"])
 
             # send the new player a welcome message
-            mud.send_message(id,"Welcome to the game, %s. Type 'help' for a list of commands. Have fun!" % players[id]["name"])
+            mud.send_message(id,"Welcome to the game, %s. Type '[h]elp' for a list of commands. Have fun!" % players[id]["name"])
 
             # send the new player the description of their current room
             mud.send_message(id,rooms[players[id]["room"]]["description"])
@@ -129,16 +129,16 @@ while True:
         # to the game!
 
         # 'help' command
-        elif command == "help":
+        elif command == "help" or command == "h":
 
             # send the player back the list of possible commands
             mud.send_message(id,"Commands:")
-            mud.send_message(id,"  say <message>  - Says something out loud, e.g. 'say Hello'")
-            mud.send_message(id,"  look           - Examines the surroundings, e.g. 'look'")
-            mud.send_message(id,"  enter <exit>      - Moves through the exit specified, e.g. 'enter outside'")
+            mud.send_message(id,"  [s]ay <message>  - Says something out loud, e.g. 'say Hello'")
+            mud.send_message(id,"  [l]ook           - Examines the surroundings, e.g. 'look'")
+            mud.send_message(id,"  [e]nter <exit>      - Moves through the exit specified, e.g. 'enter outside'")
 
         # 'say' command
-        elif command == "say":
+        elif command == "say" or command == "s":
 
             # go through every player in the game
             for pid,pl in players.items():
@@ -148,7 +148,7 @@ while True:
                     mud.send_message(pid,"%s says: %s" % (players[id]["name"],params) )
 
         # 'look' command
-        elif command == "look":
+        elif command == "look" or command == "l":
 
             # store the player's current room
             rm = rooms[players[id]["room"]]
@@ -171,7 +171,7 @@ while True:
             mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
 
         # 'go' command
-        elif command == "enter":
+        elif command == "enter" or command == "e":
 
             # store the exit name
             ex = params.lower()
