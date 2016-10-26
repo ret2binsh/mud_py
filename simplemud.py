@@ -78,7 +78,7 @@ while True:
         # 'Tavern' room.
         # Try adding more player stats - level, gold, inventory, etc
         players[id] = {
-            "name": "blank",
+            "name": "unknown",
             "room": "Tavern",
         }
 
@@ -110,7 +110,7 @@ while True:
         if id not in players: continue
 
         # if the player hasn't given their name yet, use this first command as their name
-        if players[id]["name"] == "blank":
+        if players[id]["name"] == "unknown":
 
             players[id]["name"] = command
 
