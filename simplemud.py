@@ -112,6 +112,7 @@ while True:
             mud.send_message(id,"  [sh]out <message>  - Shout something to all rooms, e.g. 'shout Hello!'")
             mud.send_message(id,"  [l]ook           - Examines the surroundings, e.g. 'look'")
             mud.send_message(id,"  [e]nter <exit>      - Moves through the exit specified, e.g. 'enter outside'")
+            mud.send_message(id,"  [q]uit            - Closes the session to the MUD server.")
 
         # 'say' command
         elif command == "say" or command == "s":
@@ -192,6 +193,12 @@ while True:
             else:
                 # send back an 'unknown exit' message
                 mud.send_message(id, "Unknown exit '%s'" % ex)
+
+        elif command == "quit" or command == "q":
+
+            # Closes the player's connection
+            mud.send_message(id,"Thanks for playing. Goodbye!")
+            mud._handle_disconnect(id)
 
         # some other, unrecognised command
         else:
