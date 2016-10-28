@@ -31,7 +31,7 @@ rooms = {
     },
     "Floor4": {
         "description": "You're now on the top floor. A nightmarish phantom is approaching.",
-        "exits": {"floor3": "Floor3", "service elevator": "Mansion"}
+        "exits": {"floor3": "Floor3", "service elevator": "Mansion"},
         "items": {"sword": "sword", "knife": "knife"}
     }
 }
