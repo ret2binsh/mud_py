@@ -109,6 +109,7 @@ while True:
             # send the player back the list of possible commands
             mud.send_message(id,"Commands:")
             mud.send_message(id,"  [s]ay <message>  - Says something out loud, e.g. 'say Hello'")
+            mud.send_message(id,"  [sh]out <message>  - Shout something to all rooms, e.g. 'shout Hello!'")
             mud.send_message(id,"  [l]ook           - Examines the surroundings, e.g. 'look'")
             mud.send_message(id,"  [e]nter <exit>      - Moves through the exit specified, e.g. 'enter outside'")
 
@@ -121,6 +122,13 @@ while True:
                 if players[pid]["room"] == players[id]["room"]:
                     # send them a message telling them what the player said
                     mud.send_message(pid,"%s says: %s" % (players[id]["name"],params) )
+
+        elif command == "shout" or command == "sh":
+
+            # go through every player in the game
+            for pid,pl in players.items():
+                # send message to everyone
+                mud.send_message(pid,"%s shouts: %s" % (players[id]["name"],params) )
 
         # 'look' command
         elif command == "look" or command == "l":
