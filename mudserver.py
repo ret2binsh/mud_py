@@ -5,6 +5,7 @@ Contains one class, MudServer, which can be instantiated to start a server runni
 then used to send and receive messages from players.
 
 author: Mark Frimston - mfrimston@gmail.com
+mud_py fork author: Joshua Gonzales
 """
 
 
