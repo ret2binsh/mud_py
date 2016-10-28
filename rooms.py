@@ -1,11 +1,12 @@
 rooms = {
     "Tavern": {
         "description": "You're in a cozy tavern warmed by an open fire.",
-        "exits": { "outside": "Town" },
+        "exits": { "outside": "Town",},
+        "items": {"beer": "beer", "barstool": "barstool","clock": "clock"} ,
     },
     "Town": {
         "description": "You're standing outside and there is a tavern to your right and a mansion down the street. It's raining.",
-        "exits": { "inside": "Tavern", "mansion": "Mansion" },
+        "exits": { "tavern": "Tavern", "mansion": "Mansion" },
     },
     "Mansion": {
         "description": "You're on the first floor of a creepy four-story mansion.",

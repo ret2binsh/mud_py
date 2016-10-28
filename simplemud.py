@@ -142,6 +142,8 @@ while True:
             # send player a message containing the list of players in the room
             mud.send_message(id, "Players here: %s" % ", ".join(playershere))
 
+            mud.send_message(id, "Items available: %s" % ", ".join(rm["items"]))
+
             # send player a message containing the list of exits from this room
             mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
 
