@@ -111,6 +111,7 @@ while True:
             mud.send_message(id,"  [s]ay <message>  - Says something out loud, e.g. 'say Hello'")
             mud.send_message(id,"  [sh]out <message>  - Shout something to all rooms, e.g. 'shout Hello!'")
             mud.send_message(id,"  [l]ook           - Examines the surroundings, e.g. 'look'")
+            mud.send_message(id,"  [i]nteract <item>  -Further examines an item")
             mud.send_message(id,"  [e]nter <exit>      - Moves through the exit specified, e.g. 'enter outside'")
             mud.send_message(id,"  [q]uit            - Closes the session to the MUD server.")
 
@@ -155,6 +156,18 @@ while True:
 
             # send player a message containing the list of exits from this room
             mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
+
+        elif command == "interact" or command == "i":
+
+            # store the player's current room
+            rm = rooms[players[id]["room"]]
+
+            # Iterate through items within the current room
+            for item in rm["items"]:
+                # Determine if the player is interacting with a valid object
+                if item == params:
+                    # Send the description of the item
+                    mud.send_message(id, rm["items"][item])
 
         # 'go' command
         elif command == "enter" or command == "e":
