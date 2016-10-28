@@ -1,7 +1,7 @@
 rooms = {
     "Tavern": {
         "description": "You're in a cozy tavern warmed by an open fire.",
-        "exits": { "outside": "Town", "teleporter", "Narnia"},
+        "exits": { "outside": "Town", "teleporter": "Narnia"},
         "items": {"beer": "beer", "barstool": "barstool","clock": "clock"} ,
     },
     "Narnia": {
