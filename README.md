@@ -4,6 +4,10 @@ MUD Pi
 A simple text-based Multi-User Dungeon (MUD) game, which could be run on a 
 Raspberry Pi or other low-end server.
 
+Security
+--------
+
+Currently there is no security implementations for this project. Therefore, if you open this server to the internet then anyone can (and probably will) connect and tie up resources. A password based authentication method will be added in the future as well as persistent login which will allow regulars to login and retrieve their saved characters. Be advised, telnet is inherently susceptible to eavesdropping since all text is sent in the clear. Once password based authentication is added be sure to use a password and username that you do not use anywhere else and one that you are willing to 'lose'.
 
 Requirements
 ------------
