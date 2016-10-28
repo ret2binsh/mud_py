@@ -8,7 +8,7 @@ rooms = {
         "description": "You find yourself in an enchanted realm, far far from everything you know",
         "exits": {"teleporter": "Tavern"},
         "items": {"broken branches": "broken branches", "sleigh": "sleigh"}
-    }
+    },
     "Town": {
         "description": "You're standing outside and there is a tavern to your right and a mansion down the street. It's raining.",
         "exits": { "tavern": "Tavern", "mansion": "Mansion" },
