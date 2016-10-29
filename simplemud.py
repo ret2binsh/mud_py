@@ -19,6 +19,7 @@ author: Mark Frimston - mfrimston@gmail.com
 """
 
 import time
+import hashlib
 
 # import  available rooms from the rooms dependency file
 from rooms import rooms
@@ -55,10 +56,15 @@ while True:
         players[id] = {
             "name": "unknown",
             "room": "Tavern",
+            "authenticated": False,
         }
 
+        # send the new player the game banner
+        banner = open('banner.txt', 'r')
+        mud.send_message(id, banner.read())
+        banner.close()
         # send the new player a prompt for their name
-        mud.send_message(id,"What is your name?")
+        mud.send_message(id,"Please enter the login password: ")
 
 
     # go through any recently disconnected players
@@ -80,140 +86,160 @@ while True:
     # go through any new commands sent from players
     for id,command,params in mud.get_commands():
 
-        # if for any reason the player isn't in the player map, skip them and
-        # move on to the next one
-        if id not in players: continue
+        # Checks to see if the user has authenticated to the server.
+        if players[id]["authenticated"]:
 
-        # if the player hasn't given their name yet, use this first command as their name
-        if players[id]["name"] == "unknown":
+            # if for any reason the player isn't in the player map, skip them and
+            # move on to the next one
+            if id not in players: continue
 
-            players[id]["name"] = command
+            # if the player hasn't given their name yet, use this first command as their name
+            if players[id]["name"] == "unknown":
 
-            # go through all the players in the game
-            for pid,pl in players.items():
-                # send each player a message to tell them about the new player
-                mud.send_message(pid,"%s entered the game" % players[id]["name"])
-
-            # send the new player a welcome message
-            mud.send_message(id,"Welcome to the game, %s. Type '[h]elp' for a list of commands. Have fun!" % players[id]["name"])
-
-            # send the new player the description of their current room
-            mud.send_message(id,rooms[players[id]["room"]]["description"])
-
-        # each of the possible commands is handled below. Try adding new commands
-        # to the game!
-
-        # 'help' command
-        elif command == "help" or command == "h":
-
-            # send the player back the list of possible commands
-            mud.send_message(id,"Commands:")
-            mud.send_message(id,"  [s]ay <message>  - Says something out loud, e.g. 'say Hello'")
-            mud.send_message(id,"  [sh]out <message>  - Shout something to all rooms, e.g. 'shout Hello!'")
-            mud.send_message(id,"  [l]ook           - Examines the surroundings, e.g. 'look'")
-            mud.send_message(id,"  [i]nteract <item>  -Further examines an item")
-            mud.send_message(id,"  [e]nter <exit>      - Moves through the exit specified, e.g. 'enter outside'")
-            mud.send_message(id,"  [q]uit            - Closes the session to the MUD server.")
-
-        # 'say' command
-        elif command == "say" or command == "s":
-
-            # go through every player in the game
-            for pid,pl in players.items():
-                # if they're in the same room as the player
-                if players[pid]["room"] == players[id]["room"]:
-                    # send them a message telling them what the player said
-                    mud.send_message(pid,"%s says: %s" % (players[id]["name"],params) )
-
-        elif command == "shout" or command == "sh":
-
-            # go through every player in the game
-            for pid,pl in players.items():
-                # send message to everyone
-                mud.send_message(pid,"%s shouts: %s" % (players[id]["name"],params) )
-
-        # 'look' command
-        elif command == "look" or command == "l":
-
-            # store the player's current room
-            rm = rooms[players[id]["room"]]
-
-            # send the player back the description of their current room
-            mud.send_message(id, rm["description"])
-
-            playershere = []
-            # go through every player in the game
-            for pid,pl in players.items():
-                # if they're in the same room as the player
-                if players[pid]["room"] == players[id]["room"]:
-                    # add their name to the list
-                    playershere.append(players[pid]["name"])
-
-            # send player a message containing the list of players in the room
-            mud.send_message(id, "Players here: %s" % ", ".join(playershere))
-
-            mud.send_message(id, "Items available: %s" % ", ".join(rm["items"]))
-
-            # send player a message containing the list of exits from this room
-            mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
-
-        elif command == "interact" or command == "i":
-
-            # store the player's current room
-            rm = rooms[players[id]["room"]]
-
-            # Iterate through items within the current room
-            for item in rm["items"]:
-                # Determine if the player is interacting with a valid object
-                if item == params:
-                    # Send the description of the item
-                    mud.send_message(id, rm["items"][item])
-
-        # 'go' command
-        elif command == "enter" or command == "e":
-
-            # store the exit name
-            ex = params.lower()
-
-            # store the player's current room
-            rm = rooms[players[id]["room"]]
-
-            # if the specified exit is found in the room's exits list
-            if ex in rm["exits"]:
+                players[id]["name"] = command
 
                 # go through all the players in the game
                 for pid,pl in players.items():
-                    # if player is in the same room and isn't the player sending the command
-                    if players[pid]["room"] == players[id]["room"] and pid!=id:
-                        # send them a message telling them that the player left the room
-                        mud.send_message(pid,"%s left via exit '%s'" % (players[id]["name"],ex))
+                    # send each player a message to tell them about the new player
+                    mud.send_message(pid,"%s entered the game" % players[id]["name"])
 
-                # update the player's current room to the one the exit leads to
-                players[id]["room"] = rm["exits"][ex]
+                # send the new player a welcome message
+                mud.send_message(id,"Welcome to the game, %s. Type '[h]elp' for a list of commands. Have fun!" % players[id]["name"])
+
+                # send the new player the description of their current room
+                mud.send_message(id,rooms[players[id]["room"]]["description"])
+
+            # each of the possible commands is handled below. Try adding new commands
+            # to the game!
+
+            # 'help' command
+            elif command == "help" or command == "h":
+
+                # send the player back the list of possible commands
+                mud.send_message(id,"Commands:")
+                mud.send_message(id,"  [s]ay <message>  - Says something out loud, e.g. 'say Hello'")
+                mud.send_message(id,"  [sh]out <message>  - Shout something to all rooms, e.g. 'shout Hello!'")
+                mud.send_message(id,"  [l]ook           - Examines the surroundings, e.g. 'look'")
+                mud.send_message(id,"  [i]nteract <item>  -Further examines an item")
+                mud.send_message(id,"  [e]nter <exit>      - Moves through the exit specified, e.g. 'enter outside'")
+                mud.send_message(id,"  [q]uit            - Closes the session to the MUD server.")
+
+            # 'say' command
+            elif command == "say" or command == "s":
+
+                # go through every player in the game
+                for pid,pl in players.items():
+                    # if they're in the same room as the player
+                    if players[pid]["room"] == players[id]["room"]:
+                        # send them a message telling them what the player said
+                        mud.send_message(pid,"%s says: %s" % (players[id]["name"],params) )
+
+            elif command == "shout" or command == "sh":
+
+                # go through every player in the game
+                for pid,pl in players.items():
+                    # send message to everyone
+                    mud.send_message(pid,"%s shouts: %s" % (players[id]["name"],params) )
+
+            # 'look' command
+            elif command == "look" or command == "l":
+
+                # store the player's current room
                 rm = rooms[players[id]["room"]]
 
-                # go through all the players in the game
+                # send the player back the description of their current room
+                mud.send_message(id, rm["description"])
+
+                playershere = []
+                # go through every player in the game
                 for pid,pl in players.items():
-                    # if player is in the same (new) room and isn't the player sending the command
-                    if players[pid]["room"] == players[id]["room"] and pid!=id:
-                        # send them a message telling them that the player entered the room
-                        mud.send_message(pid,"%s arrived via exit '%s'" % (players[id]["name"],ex))
+                    # if they're in the same room as the player
+                    if players[pid]["room"] == players[id]["room"]:
+                        # add their name to the list
+                        playershere.append(players[pid]["name"])
 
-                # send the player a message telling them where they are now
-                mud.send_message(id,"You arrive at '%s'" % players[id]["room"])
+                # send player a message containing the list of players in the room
+                mud.send_message(id, "Players here: %s" % ", ".join(playershere))
 
-            # the specified exit wasn't found in the current room
+                mud.send_message(id, "Items available: %s" % ", ".join(rm["items"]))
+
+                # send player a message containing the list of exits from this room
+                mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
+
+            elif command == "interact" or command == "i":
+
+                # store the player's current room
+                rm = rooms[players[id]["room"]]
+
+                # Iterate through items within the current room
+                for item in rm["items"]:
+                    # Determine if the player is interacting with a valid object
+                    if item == params:
+                        # Send the description of the item
+                        mud.send_message(id, rm["items"][item])
+
+            # 'go' command
+            elif command == "enter" or command == "e":
+
+                # store the exit name
+                ex = params.lower()
+
+                # store the player's current room
+                rm = rooms[players[id]["room"]]
+
+                # if the specified exit is found in the room's exits list
+                if ex in rm["exits"]:
+
+                    # go through all the players in the game
+                    for pid,pl in players.items():
+                        # if player is in the same room and isn't the player sending the command
+                        if players[pid]["room"] == players[id]["room"] and pid!=id:
+                            # send them a message telling them that the player left the room
+                            mud.send_message(pid,"%s left via exit '%s'" % (players[id]["name"],ex))
+
+                    # update the player's current room to the one the exit leads to
+                    players[id]["room"] = rm["exits"][ex]
+                    rm = rooms[players[id]["room"]]
+
+                    # go through all the players in the game
+                    for pid,pl in players.items():
+                        # if player is in the same (new) room and isn't the player sending the command
+                        if players[pid]["room"] == players[id]["room"] and pid!=id:
+                            # send them a message telling them that the player entered the room
+                            mud.send_message(pid,"%s arrived via exit '%s'" % (players[id]["name"],ex))
+
+                    # send the player a message telling them where they are now
+                    mud.send_message(id,"You arrive at '%s'" % players[id]["room"])
+
+                # the specified exit wasn't found in the current room
+                else:
+                    # send back an 'unknown exit' message
+                    mud.send_message(id, "Unknown exit '%s'" % ex)
+
+            elif command == "quit" or command == "q":
+
+                # Closes the player's connection
+                mud.send_message(id,"Thanks for playing. Goodbye!")
+                mud._handle_disconnect(id)
+
+            # some other, unrecognised command
             else:
-                # send back an 'unknown exit' message
-                mud.send_message(id, "Unknown exit '%s'" % ex)
+                # send back an 'unknown command' message
+                mud.send_message(id, "Unknown command '%s'" % command)
+                mud.send_message(id, "Ensure to use lowercase commands.")
 
-        elif command == "quit" or command == "q":
-
-            # Closes the player's connection
-            mud.send_message(id,"Thanks for playing. Goodbye!")
-            mud._handle_disconnect(id)
-
-        # some other, unrecognised command
         else:
-            # send back an 'unknown command' message
-            mud.send_message(id, "Unknown command '%s'" % command)
+
+            # Get server hash from pass file.
+            file_conn = open('pass', 'r')
+            serverSecret = file_conn.readline()
+            file_conn.close()
+
+            # Compare user provide password against the stored hash
+            hashResult = hashlib.sha224(command).hexdigest()
+            if hashResult != serverSecret:
+                mud.send_message(id, "Sorry, you provided an incorrect password.")
+            else:
+                players[id]["authenticated"] = True
+                mud.send_message(id, "Welcome!")
+                mud.send_message(id, "What is your name?")
