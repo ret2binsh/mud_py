@@ -96,7 +96,7 @@ while True:
             # if the player hasn't given their name yet, use this first command as their name
             if players[id]["name"] == "unknown":
 
-                players[id]["name"] = command
+                players[id]["name"] = command + ' ' + params
 
                 # go through all the players in the game
                 for pid,pl in players.items():

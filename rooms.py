@@ -1,8 +1,10 @@
+import time
+
 rooms = {
     "Tavern": {
         "description": "You're in a cozy tavern warmed by an open fire.",
         "exits": { "outside": "Town", "teleporter": "Narnia"},
-        "items": {"beer": "A delicious looking wheat beer.", "barstool": "A worn, maple barstool","clock": "It reads, 12:30am. Either it's broken or I've lost track of time.."} ,
+        "items": {"beer": "A delicious looking wheat beer.", "barstool": "A worn, maple barstool","clock": "The current time is...12am? Must be broke."} ,
     },
     "Narnia": {
         "description": "You find yourself in an enchanted realm, far far from everything you know",
