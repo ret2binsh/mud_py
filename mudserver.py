@@ -35,12 +35,16 @@ class MudServer(object):
         address = ""    # the ip address of this client
         buffer = ""     # holds data send from the client until a full message is received
         lastcheck = 0   # the last time we checked if the client was still connected
+        lastactive = 0  # the last time we received a message from the client
+        authenticated = False # tracks the authentication status of the client
 
-        def __init__(self,socket,address,buffer,lastcheck):
+        def __init__(self,socket,address,buffer,lastcheck,lastactive,authenticated):
             self.socket = socket
             self.address = address
             self.buffer = buffer
             self.lastcheck = lastcheck
+            self.lastactive = lastactive
+            self.authenticated = authenticated
 
 
     # Used to store different types of occurences
@@ -89,7 +93,7 @@ class MudServer(object):
         # without having to wait
         self._listen_socket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR, 1)
 
-        # bind the socket to an ip address and port. Address 0.0.0.0 means that we 
+        # bind the socket to an ip address and port. Address 0.0.0.0 means that we
         # will bind to all of the available network interfaces
         self._listen_socket.bind(("0.0.0.0",8055))
 
@@ -112,6 +116,7 @@ class MudServer(object):
         # check for new stuff
         self._check_for_new_connections()
         self._check_for_disconnected()
+        self._check_for_stale_state()
         self._check_for_messages()
 
         # move the new events into the main events list so that they can be obtained
@@ -134,6 +139,14 @@ class MudServer(object):
         # return the info list
         return retval
 
+    def authentication_status(self,clid,status):
+        """
+        Updates the authentication status of the client. This is used to adjust
+        how long a player can go stale before they are ejected from the server.
+        """
+
+        self._clients[clid].authenticated = status
+        return status
 
     def get_disconnected_players(self):
         """
@@ -230,7 +243,7 @@ class MudServer(object):
 
         # construct a new _Client object to hold info about the newly connected
         # client. Use 'nextid' as the new client's id number
-        self._clients[self._nextid] = MudServer._Client(joined_socket,addr[0],"",time.time())
+        self._clients[self._nextid] = MudServer._Client(joined_socket,addr[0],"",time.time(),time.time(),False)
 
         # add a new player occurence to the new events list with the player's id
         # number
@@ -258,6 +271,26 @@ class MudServer(object):
             # update the last check time
             cl.lastcheck = time.time()
 
+    def _check_for_stale_state(self):
+
+        # go through all the clients
+        for id,cl in list(self._clients.items()):
+
+            # Checks if the client is in the authenticated state
+            if cl.authenticated:
+
+                # if authenticated they have 60 minutes of inactivity
+                if time.time() - cl.lastactive < 3600: continue
+
+            else:
+
+                # if they are not authenticated then they have 30 seconds
+                if time.time() - cl.lastactive < 30: continue
+
+            # Disconnects client for inactivity
+            self.send_message(id, "You have been inactive for too long. Disconnecting...")
+            self._handle_disconnect(id)
+
 
     def _check_for_messages(self):
 
@@ -283,6 +316,9 @@ class MudServer(object):
 
                 # if there was a message in the data
                 if message:
+
+                    # update the time we last received a valid message from the client
+                    cl.lastactive = time.time()
 
                     # remove any spaces, tabs etc from the start and end of the message
                     message = message.strip()

@@ -240,6 +240,6 @@ while True:
             if hashResult != serverSecret:
                 mud.send_message(id, "Sorry, you provided an incorrect password.")
             else:
-                players[id]["authenticated"] = True
+                players[id]["authenticated"] = mud.authentication_status(id,True)
                 mud.send_message(id, "Welcome!")
                 mud.send_message(id, "What is your name?")
