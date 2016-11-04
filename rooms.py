@@ -33,7 +33,12 @@ rooms = {
     },
     "Floor4": {
         "description": "You're now on the top floor. A nightmarish phantom is approaching.",
-        "exits": {"floor3": "Floor3", "service elevator": "Mansion"},
+        "exits": {"floor3": "Floor3", "floor5": "Floor5"},
         "items": {"sword": "Now this is what I need!!", "knife": "Uhhh not sure if this would be very useful.."}
+    },
+        "Floor 5": {
+        "description": "You're now on the top floor. A nightmarish phantom is approaching.",
+        "exits": {"floor4": "Floor4", "service elevator": "Mansion"},
+        "items": {"coffee": "I need to stay awake!", "brown pants": "hmm... i might need a change of clothes if i get scared"}
     }
 }
