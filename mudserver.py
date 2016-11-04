@@ -116,8 +116,8 @@ class MudServer(object):
         # check for new stuff
         self._check_for_new_connections()
         self._check_for_disconnected()
-        self._check_for_stale_state()
         self._check_for_messages()
+        self._check_for_stale_state()
 
         # move the new events into the main events list so that they can be obtained
         # with 'get_new_players', 'get_disconnected_players' and 'get_commands'. The
@@ -187,7 +187,6 @@ class MudServer(object):
         # we make sure to put a newline on the end so the client receives the
         # message on its own line
         self._attempt_send(to,message+"\n\r")
-
 
     def shutdown(self):
         """

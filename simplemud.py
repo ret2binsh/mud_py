@@ -29,6 +29,7 @@ from mudserver import MudServer
 
 # stores the players in the game
 players = {}
+duplicateName = False
 
 # start the server
 mud = MudServer()
@@ -44,7 +45,6 @@ while True:
     # us up-to-date information
     mud.update()
 
-
     # go through any newly connected players
     for id in mud.get_new_players():
 
@@ -57,6 +57,7 @@ while True:
             "name": "unknown",
             "room": "Tavern",
             "authenticated": False,
+            "afk_status": False,
         }
 
         # send the new player the game banner
@@ -96,18 +97,37 @@ while True:
             # if the player hasn't given their name yet, use this first command as their name
             if players[id]["name"] == "unknown":
 
-                players[id]["name"] = command + ' ' + params
-
-                # go through all the players in the game
+                # Iterate through all players to detect duplicate names
                 for pid,pl in players.items():
-                    # send each player a message to tell them about the new player
-                    mud.send_message(pid,"%s entered the game" % players[id]["name"])
+                    # Check if entered name is already in use
+                    if command + ' ' + params == players[pid]["name"]:
 
-                # send the new player a welcome message
-                mud.send_message(id,"Welcome to the game, %s. Type '[h]elp' for a list of commands. Have fun!" % players[id]["name"])
+                        duplicateName = True
 
-                # send the new player the description of their current room
-                mud.send_message(id,rooms[players[id]["room"]]["description"])
+                    else:
+                        # check next player for duplicate name
+                        continue
+                # Determine if duplicate name is true and tell the user to try again or
+                # set the player's name and provide welcome info
+                if duplicateName == True:
+                    # Display duplicate name message and reset duplicateName variable
+                    mud.send_message(id, "Sorry that name is already used.")
+                    duplicateName = False
+
+                else:
+                    # Name the new player
+                    players[id]["name"] = command + ' ' + params
+
+                    # go through all the players in the game
+                    for pid,pl in players.items():
+                        # send each player a message to tell them about the new player
+                        mud.send_message(pid,"%s entered the game" % players[id]["name"])
+
+                    # send the new player a welcome message
+                    mud.send_message(id,"Welcome to the game, %s. Type '[h]elp' for a list of commands. Have fun!" % players[id]["name"])
+
+                    # send the new player the description of their current room
+                    mud.send_message(id,rooms[players[id]["room"]]["description"])
 
             # each of the possible commands is handled below. Try adding new commands
             # to the game!
