@@ -139,6 +139,7 @@ while True:
                 mud.send_message(id,"Commands:")
                 mud.send_message(id,"  [s]ay <message>  - Says something out loud, e.g. 'say Hello'")
                 mud.send_message(id,"  [sh]out <message>  - Shout something to all rooms, e.g. 'shout Hello!'")
+                mud.send_message(id,"  [w]hisper          -Whisper a message to a single player, e.g. 'whisper john, Hello.'")
                 mud.send_message(id,"  [l]ook           - Examines the surroundings, e.g. 'look'")
                 mud.send_message(id,"  [i]nteract <item>  -Further examines an item")
                 mud.send_message(id,"  [e]nter <exit>      - Moves through the exit specified, e.g. 'enter outside'")
@@ -160,6 +161,25 @@ while True:
                 for pid,pl in players.items():
                     # send message to everyone
                     mud.send_message(pid,"%s shouts: %s" % (players[id]["name"],params) )
+
+            elif command == "whisper" or command == "w":
+
+                try:
+
+                    name,whisperMessage = params.split(",",1)
+                    name = name.lower()
+
+                    for pid,pl in players.items():
+                        testPlayer = players[pid]["name"].lower()
+
+                        if name.split() == testPlayer.split():
+
+                            mud.send_message(pid,"%s whispers to %s:%s" % (players[id]["name"],players[pid]["name"],whisperMessage))
+                            mud.send_message(id,"%s whispers to %s:%s" % (players[id]["name"],players[pid]["name"],whisperMessage))
+
+                except ValueError:
+
+                    mud.send_message(id, "Invalid whisper syntax, e.g [w]hisper 'name', message.")
 
             # 'look' command
             elif command == "look" or command == "l":
