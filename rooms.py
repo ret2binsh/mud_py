@@ -22,27 +22,27 @@ rooms = {
     },
     "Mansion": {
         "description": "You're on the first floor of a creepy four-story mansion.",
-        "exits": {"outside": "Town", "floor2": "Floor2"},
+        "exits": {"outside": "Town", "floor2": "Floor 2"},
         "items": {"candle": "This could be useful..", "chair": "A lonely chair.", "suit of armor": "Oooh shiny."}
     },
-    "Floor2": {
+    "Floor 2": {
         "description": "You're on the second floor and filled with self doubt.",
-        "exits": {"floor1": "mansion", "floor3": "Floor3"},
+        "exits": {"floor1": "mansion", "floor3": "Floor 3"},
         "items": {"light switch": "What the hell is this thing on the wall? Seems out of place.", "crooked picture": picture}
     },
-    "Floor3": {
+    "Floor 3": {
         "description": "You're now on floor three and have serious doubts about this place.",
-        "exits": {"floor2": "Floor2", "floor4": "Floor4"},
+        "exits": {"floor2": "Floor 2", "floor4": "Floor 4"},
         "items": {"nothing here": "nothing here"}
     },
-    "Floor4": {
+    "Floor 4": {
         "description": "You're now on the top floor. A nightmarish phantom is approaching.",
-        "exits": {"floor3": "Floor3", "floor5": "Floor5"},
+        "exits": {"floor3": "Floor 3", "floor5": "Floor 5"},
         "items": {"sword": "Now this is what I need!!", "knife": "Uhhh not sure if this would be very useful.."}
     },
-        "Floor 5": {
+    "Floor 5": {
         "description": "You're now on the top floor. A nightmarish phantom is approaching.",
-        "exits": {"floor4": "Floor4", "service elevator": "Mansion"},
+        "exits": {"floor4": "Floor 4", "service elevator": "Mansion"},
         "items": {"coffee": "I need to stay awake!", "brown pants": "hmm... i might need a change of clothes if i get scared"}
     }
 }

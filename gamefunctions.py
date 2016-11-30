@@ -178,6 +178,10 @@ def process_commands(mud):
                     if players[pid].name == params:
                         # Display the default character string
                         mud.send_message(id, str(players[pid]))
+            # 'inventory' command
+            elif command == "inventory" or command == "in":
+
+                inventory_command(mud,id)
 
             # 'go' command
             elif command == "enter" or command == "e":
@@ -204,11 +208,16 @@ def create_player(mud,id,command,params):
     """
     # used to ensure a duplicate name is not chosen.
     duplicateName = False
+    name_list = [command]
+    if params:
+        name_list.append(params)
+
+    name_string = " ".join(name_list)
 
     # Iterate through all players to detect duplicate names
     for pid,pl in players.items():
         # Check if entered name is already in use
-        if command + ' ' + params == players[pid].name:
+        if name_string == players[pid].name:
 
             duplicateName = True
 
@@ -224,7 +233,7 @@ def create_player(mud,id,command,params):
 
     else:
         # Name the new player
-        players[id].name = command + ' ' + params
+        players[id].name = name_string
 
         # go through all the players in the game
         for pid,pl in players.items():
@@ -289,8 +298,17 @@ def help_command(mud,id):
     mud.send_message(id,"  [w]hisper          - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
     mud.send_message(id,"  [l]ook             - Examines the surroundings, e.g. 'look'")
     mud.send_message(id,"  [i]nteract <item>  - Further examines an item or player, e.g 'i [item]/[name]'")
+    mud.send_message(id,"  [in]ventory        - Lists all of the items in your inventory, e.g. 'inventory'")
     mud.send_message(id,"  [e]nter <object>   - Moves through the exit specified, e.g. 'enter outside'")
     mud.send_message(id,"  [q]uit             - Closes the session to the MUD server.")
+
+def inventory_command(mud,id):
+    """
+    Function that handles the inventory command. Sends the list of items to the
+    players console.
+    """
+
+    mud.send_message(id, "You have the following items: " + players[id].get_items())
 
 def quit_command(mud,id,command,params):
     """
