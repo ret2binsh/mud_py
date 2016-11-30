@@ -1,5 +1,9 @@
 import time
 
+f = open('hillary.txt','r')
+picture = f.read()
+f.close()
+
 rooms = {
     "Tavern": {
         "description": "You're in a cozy tavern warmed by an open fire.",
@@ -24,7 +28,7 @@ rooms = {
     "Floor2": {
         "description": "You're on the second floor and filled with self doubt.",
         "exits": {"floor1": "mansion", "floor3": "Floor3"},
-        "items": {"light switch": "What the hell is this thing on the wall? Seems out of place.", "crooked picture": "A photo of an ugly old woman. Hillary?"}
+        "items": {"light switch": "What the hell is this thing on the wall? Seems out of place.", "crooked picture": picture}
     },
     "Floor3": {
         "description": "You're now on floor three and have serious doubts about this place.",
