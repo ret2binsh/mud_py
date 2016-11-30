@@ -1,5 +1,9 @@
 import time
 
+f = open('hillary.txt','r')
+picture = f.read()
+f.close()
+
 rooms = {
     "Tavern": {
         "description": "You're in a cozy tavern warmed by an open fire.",
@@ -24,7 +28,7 @@ rooms = {
     "Floor2": {
         "description": "You're on the second floor and filled with self doubt.",
         "exits": {"floor1": "mansion", "floor3": "Floor3"},
-        "items": {"light switch": "What the hell is this thing on the wall? Seems out of place.", "crooked picture": "A photo of an ugly old woman. Hillary?"}
+        "items": {"light switch": "What the hell is this thing on the wall? Seems out of place.", "crooked picture": picture}
     },
     "Floor3": {
         "description": "You're now on floor three and have serious doubts about this place.",
@@ -33,7 +37,12 @@ rooms = {
     },
     "Floor4": {
         "description": "You're now on the top floor. A nightmarish phantom is approaching.",
-        "exits": {"floor3": "Floor3", "service elevator": "Mansion"},
+        "exits": {"floor3": "Floor3", "floor5": "Floor5"},
         "items": {"sword": "Now this is what I need!!", "knife": "Uhhh not sure if this would be very useful.."}
+    },
+        "Floor 5": {
+        "description": "You're now on the top floor. A nightmarish phantom is approaching.",
+        "exits": {"floor4": "Floor4", "service elevator": "Mansion"},
+        "items": {"coffee": "I need to stay awake!", "brown pants": "hmm... i might need a change of clothes if i get scared"}
     }
 }
