@@ -3,6 +3,7 @@ import hashlib
 from character import Warrior
 from rooms import rooms
 
+# empty list for tracking all players
 players = {}
 
 def login_check(mud,id,command):
@@ -78,6 +79,35 @@ def process_commands(mud):
     # go through any new commands sent from players
     for id,command,params in mud.get_commands():
 
+        # arguments list used for the command list
+        args = [mud,id,command,params]
+
+        # List of commands when in normal mode
+        command_list = {
+            "enter": enter_command,
+            "e": enter_command,
+            "help": help_command,
+            "h": help_command,
+            "interact": interact_command,
+            "i": interact_command,
+            "inventory": inventory_command,
+            "in": inventory_command,
+            "look": look_command,
+            "l": look_command,
+            "mute": mute_command,
+            "m": mute_command,
+            "quit": quit_command,
+            "q": quit_command,
+            "say": say_command,
+            "s": say_command,
+            "shout": shout_command,
+            "sh": shout_command,
+            "whisper": whisper_command,
+            "w": whisper_command,
+            "unmute": unmute_command,
+            "un": unmute_command,
+            }
+
         # if for any reason the player isn't in the player map, skip them and
         # move on to the next one
         if id not in players: continue
@@ -89,113 +119,20 @@ def process_commands(mud):
             if players[id].name == "unknown":
 
                 # Allows the user to name their player and choose their class.
-                create_player(mud,id,command,params)
+                create_player(*args)
 
             # each of the possible commands is handled below. Try adding new commands
             # to the game!
 
-            # 'help' command
-            elif command == "help" or command == "h":
-                # help menu
-                help_command(mud,id)
-
-            # 'say' command
-            elif command == "say" or command == "s":
-
-                # go through every player in the game
-                for pid,pl in players.items():
-                    # if they're in the same room as the player
-                    if players[pid].room == players[id].room:
-                        # send them a message telling them what the player said
-                        mud.send_message(pid,"%s says: %s" % (players[id].name,params) )
-
-            elif command == "shout" or command == "sh":
-
-                # go through every player in the game
-                for pid,pl in players.items():
-                    # send message to everyone
-                    mud.send_message(pid,"%s shouts: %s" % (players[id].name,params) )
-
-            elif command == "whisper" or command == "w":
-
-                try:
-
-                    name,whisperMessage = params.split(",",1)
-                    name = name.lower()
-
-                    for pid,pl in players.items():
-                        testPlayer = players[pid].name.lower()
-
-                        if name.split() == testPlayer.split():
-
-                            mud.send_message(pid,"%s whispers to %s:%s" % (players[id].name,players[pid].name,whisperMessage))
-                            mud.send_message(id,"%s whispers to %s:%s" % (players[id].name,players[pid].name,whisperMessage))
-
-                except ValueError:
-
-                    mud.send_message(id, "Invalid whisper syntax, e.g [w]hisper 'name', message.")
-
-            # 'look' command
-            elif command == "look" or command == "l":
-
-                # store the player's current room
-                rm = rooms[players[id].room]
-
-                # send the player back the description of their current room
-                mud.send_message(id, rm["description"])
-
-                playersHere = []
-                # go through every player in the game
-                for pid,pl in players.items():
-                    # if they're in the same room as the player
-                    if players[pid].room == players[id].room:
-                        # add their name to the list
-                        playersHere.append(players[pid].name)
-
-                # send player a message containing the list of players in the room
-                mud.send_message(id, "Players here: %s" % ", ".join(playersHere))
-
-                mud.send_message(id, "Items available: %s" % ", ".join(rm["items"]))
-
-                # send player a message containing the list of exits from this room
-                mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
-
-            elif command == "interact" or command == "i":
-
-                # store the player's current room
-                rm = rooms[players[id].room]
-
-                # Iterate through items within the current room
-                for item in rm["items"]:
-                    # Determine if the player is interacting with a valid object
-                    if item == params:
-                        # Send the description of the item
-                        mud.send_message(id, rm["items"][item])
-
-                # Allows the player to get info on other players.
-                for pid,pl in players.items():
-                    # Check through all players
-                    if players[pid].name == params:
-                        # Display the default character string
-                        mud.send_message(id, str(players[pid]))
-            # 'inventory' command
-            elif command == "inventory" or command == "in":
-
-                inventory_command(mud,id)
-
-            # 'go' command
-            elif command == "enter" or command == "e":
-
-                enter_command(mud,id,command,params)
-
-            elif command == "quit" or command == "q":
-                # softly disconnects the user
-                quit_command(mud,id,command,params)
-
-            # some other, unrecognised command
             else:
-                # handles unknown commands
-                unknown_command(mud,id,command)
+                # Check to determine if user input is within the command list
+                # then execute that function
+                try:
+                    command_list[command](*args)
+                # If the command is not within the list then execute the
+                # unknown command function
+                except KeyError:
+                    unknown_command(*args)
 
         else:
             # since unauthenticated, this allows the user to enter the password
@@ -286,29 +223,141 @@ def enter_command(mud,id,command,params):
         # send back an 'unknown exit' message
         mud.send_message(id, "Unknown exit '%s'" % ex)
 
-def help_command(mud,id):
+def help_command(mud,id,command,params):
     """
     Provide the available commands within the help menu.
     """
 
     # send the player back the list of possible commands
     mud.send_message(id,"Commands:")
-    mud.send_message(id,"  [s]ay <message>    - Says something out loud, e.g. 'say Hello'")
-    mud.send_message(id,"  [sh]out <message>  - Shout something to all rooms, e.g. 'shout Hello!'")
-    mud.send_message(id,"  [w]hisper          - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
-    mud.send_message(id,"  [l]ook             - Examines the surroundings, e.g. 'look'")
-    mud.send_message(id,"  [i]nteract <item>  - Further examines an item or player, e.g 'i [item]/[name]'")
-    mud.send_message(id,"  [in]ventory        - Lists all of the items in your inventory, e.g. 'inventory'")
-    mud.send_message(id,"  [e]nter <object>   - Moves through the exit specified, e.g. 'enter outside'")
-    mud.send_message(id,"  [q]uit             - Closes the session to the MUD server.")
+    mud.send_message(id,"  [e]nter <object>     - Moves through the exit specified, e.g. 'enter outside'")
+    mud.send_message(id,"  [i]nteract <item>    - Further examines an item or player, e.g 'i [item]/[name]'")
+    mud.send_message(id,"  [in]ventory          - Lists all of the items in your inventory, e.g. 'inventory'")
+    mud.send_message(id,"  [l]ook               - Examines the surroundings, e.g. 'look'")
+    mud.send_message(id,"  [un]/[m]ute <player> - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
+    mud.send_message(id,"  [q]uit               - Closes the session to the MUD server.")
+    mud.send_message(id,"  [s]ay <message>      - Says something out loud, e.g. 'say Hello'")
+    mud.send_message(id,"  [sh]out <message>    - Shout something to all rooms, e.g. 'shout Hello!'")
+    mud.send_message(id,"  [w]hisper            - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
 
-def inventory_command(mud,id):
+def interact_command(mud,id,command,params):
+    """
+    Function that handles the interact command. The player can either interact
+    with an item in the room or a character that is in the room. If they
+    interact with a character then the class string will be presented to the
+    player.
+    """
+
+    # store the player's current room
+    rm = rooms[players[id].room]
+
+    # Iterate through items within the current room
+    for item in rm["items"]:
+        # Determine if the player is interacting with a valid object
+        if item == params:
+            # Send the description of the item
+            mud.send_message(id, rm["items"][item])
+
+    # Allows the player to get info on other players by interacting with them.
+    for pid,pl in players.items():
+        # Check through all players
+        if players[pid].name == params:
+            # Display the default character string
+            mud.send_message(id, str(players[pid]))
+
+def inventory_command(mud,id,command,params):
     """
     Function that handles the inventory command. Sends the list of items to the
     players console.
     """
 
     mud.send_message(id, "You have the following items: " + players[id].get_items())
+
+def look_command(mud,id,command,params):
+    """
+    Function that handles the look command. Displays all of the available
+    items in the area as well as the current players in the same room.
+    """
+
+    # store the player's current room
+    rm = rooms[players[id].room]
+
+    # send the player back the description of their current room
+    mud.send_message(id, rm["description"])
+
+    playersHere = []
+    # go through every player in the game
+    for pid,pl in players.items():
+        # if they're in the same room as the player
+        if players[pid].room == players[id].room:
+            # add their name to the list
+            playersHere.append(players[pid].name)
+
+    # send player a message containing the list of players in the room
+    mud.send_message(id, "Players here: %s" % ", ".join(playersHere))
+
+    mud.send_message(id, "Items available: %s" % ", ".join(rm["items"]))
+
+    # send player a message containing the list of exits from this room
+    mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
+
+def mute_command(mud,id,command,params):
+    """
+    Function that handles the mute command. This will prevent room and world
+    message broadcasts from being received by the player. The whisper command
+    will not be effected.
+    """
+    # Check if a name was passed to the command
+    if params:
+        # iterate through all players to ensure the player name is valid
+        for pid,next_player in players.items():
+
+            if params.lower() == next_player.name.lower():
+
+                # Check to ensure the player isn't already muted
+                if params.lower() not in players[id].muted_players:
+                    # Add the player to the list and inform the user
+                    players[id].muted_players.append(params.lower())
+                    mud.send_message(id, "%s has been muted." % params)
+
+                    break
+
+                else:
+                    # Inform the user that the player is already muted
+                    mud.send_message(id, "%s is already muted." % params)
+
+                    break
+
+        else:
+            # Inform user that the player is not currently available to mute
+            mud.send_message(id, "%s is not a valid player." % params)
+
+    else:
+        # if the mute command is performed with no parameter then provide
+        # the user with a list of currently muted players
+        mud.send_message(id,"Currently muted players: ")
+
+        for muted_player in players[id].muted_players:
+
+            mud.send_message(id, "-  %s" % muted_player)
+
+def unmute_command(mud,id,command,params):
+    """
+    Function that performs the unmuting of a player. This will ensure that the
+    name provided is within the list of muted players and will then remove
+    it from the list.
+    """
+    # Ensure a name is provided
+    if params:
+        # Try to remove the name or catch the exception to inform the user
+        try:
+            # remove the player from the muted list and inform the user
+            players[id].muted_players.remove(params.lower())
+            mud.send_message(id,"%s has been unmuted." % params)
+        # player not in list exception
+        except ValueError:
+            # inform the user that the name provided was not in the list
+            mud.send_message(id,"%s is not a muted player." % params)
 
 def quit_command(mud,id,command,params):
     """
@@ -320,7 +369,34 @@ def quit_command(mud,id,command,params):
     mud.send_message(id,"Thanks for playing. Goodbye!")
     mud._handle_disconnect(id)
 
-def unknown_command(mud,id,command):
+def say_command(mud,id,command,params):
+    """
+    Function that handles the say command. This will broadcast a message from
+    the player to all the other players within the same room.
+    """
+
+    # go through every player in the game
+    for pid,pl in players.items():
+        # if they're in the same room as the player and not muted
+        if pl.room == players[id].room and players[id].name.lower() not in pl.muted_players:
+            # send them a message telling them what the player said
+            mud.send_message(pid,"%s says: %s" % (players[id].name,params) )
+
+def shout_command(mud,id,command,params):
+    """
+    Function that handles the shout command. This will broadcast a message to
+    all players in every single room within the game. This obviously has
+    potential for abuse. So a means to mute shouts will need to be developed.
+    """
+
+    # go through every player in the game
+    for pid,pl in players.items():
+        # if they are not muted
+        if players[id].name.lower() not in pl.muted_players:
+            # send message to everyone
+            mud.send_message(pid,"%s shouts: %s" % (players[id].name,params))
+
+def unknown_command(mud,id,command,params):
     """
     Handles the output provided when an unknown command is provided.
     """
@@ -328,3 +404,33 @@ def unknown_command(mud,id,command):
     # send back an 'unknown command' message
     mud.send_message(id, "Unknown command '%s'" % command)
     mud.send_message(id, "Ensure to use lowercase commands.")
+
+def whisper_command(mud,id,command,params):
+    """
+    Function that handles the whisper command. Allows the player to private
+    message any other player so that it does not broadcast to all other players.
+    """
+    # Ensure that the command is trailed by a message
+    try:
+        # splits the received data between the intended target and their message
+        name,whisperMessage = params.split(",",1)
+        # ensure all characters are lowercase to help with comparison
+        name = name.lower()
+
+        # iterate through all players and set their names to lower case
+        for pid,pl in players.items():
+            testPlayer = players[pid].name.lower()
+
+            # first test if player is whispering to themself
+            if name == players[id].name.lower():
+                # send a 'fun' message back to the user for whispering to themself
+                mud.send_message(id,"%s whisper's to themself: %s *weirdo*" % (players[id].name,whisperMessage))
+            # check to see if the player is whispering to an available character
+            elif name == testPlayer:
+                # ensure both parties see the whisper message
+                mud.send_message(pid,"%s whispers to %s:%s" % (players[id].name,players[pid].name,whisperMessage))
+                mud.send_message(id,"%s whispers to %s:%s" % (players[id].name,players[pid].name,whisperMessage))
+    # if there was no message attached, inform the user
+    except ValueError:
+
+        mud.send_message(id, "Invalid whisper syntax, e.g [w]hisper 'name', message.")
