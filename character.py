@@ -11,6 +11,7 @@ class Character(object):
         self.name = "unknown"
         self.room = "Tavern"
         self.authenticated = False
+        self.muted_players = []
         self.afk_status = False
         self.gold = 0
         self.level = 1
