@@ -1,5 +1,7 @@
 import time
 
+from items import Beer
+
 f = open('hillary.txt','r')
 picture = f.read()
 f.close()
@@ -8,7 +10,7 @@ rooms = {
     "Tavern": {
         "description": "You're in a cozy tavern warmed by an open fire.",
         "exits": { "outside": "Town", "teleporter": "Narnia"},
-        "items": {"beer": "A delicious looking wheat beer.", "barstool": "A worn, maple barstool","clock": "The current time is...12am? Must be broke."} ,
+        "items": { "beer": str(Beer())} ,
     },
     "Narnia": {
         "description": "You find yourself in an enchanted realm, far far from everything you know",

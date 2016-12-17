@@ -76,6 +76,15 @@ def process_commands(mud):
     either normal, store, battle, etc.
     """
 
+    # Contstant Variables used to track the mode that the user is currently
+    # operating.
+    _LOGIN_MODE = 0
+    _CHARACTER_SELECT_MODE = 1
+    _EXPLORATION_MODE = 2
+    _BATTLE_MODE = 3
+    _STORE_MODE = 4
+    _INN_MODE = 5
+
     # go through any new commands sent from players
     for id,command,params in mud.get_commands():
 
