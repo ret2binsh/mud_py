@@ -1,5 +1,7 @@
 import time
 
+from items import Beer
+
 f = open('hillary.txt','r')
 picture = f.read()
 f.close()
@@ -7,22 +9,27 @@ f.close()
 rooms = {
     "Tavern": {
         "description": "You're in a cozy tavern warmed by an open fire.",
-        "exits": { "outside": "Town", "teleporter": "Narnia"},
-        "items": {"beer": "A delicious looking wheat beer.", "barstool": "A worn, maple barstool","clock": "The current time is...12am? Must be broke."} ,
+        "exits": { "outside": "Taglon Village", "teleporter": "Narnia"},
+        "items": { "beer": str(Beer())} ,
     },
     "Narnia": {
         "description": "You find yourself in an enchanted realm, far far from everything you know",
         "exits": {"teleporter": "Tavern"},
         "items": {"broken branches": "Hmm..Evidence of a recent struggle.", "sleigh": "A means to travel quickly?"}
     },
-    "Town": {
+    "Taglon Village": {
         "description": "You're standing outside and there is a tavern to your right and a mansion down the street. It's raining.",
-        "exits": { "tavern": "Tavern", "mansion": "Mansion" },
+        "exits": { "tavern": "Tavern", "mansion": "Mansion", "bloodridge": "Bloodridge" },
         "items": {"barrel": "An old whisky barrel.", "bloody spoon": "A possible murder weapon, but who uses a spoon? Honestly?"}
+    },
+    "Bloodridge": {
+        "description": "You're in the ancient town of Bloodridge. Home of the elder daemons.",
+        "exits": { "taglon village": "Taglon Village"},
+        "items": {"daemon blade": "A rustic blade. Looks evil."}
     },
     "Mansion": {
         "description": "You're on the first floor of a creepy four-story mansion.",
-        "exits": {"outside": "Town", "floor2": "Floor 2"},
+        "exits": {"outside": "Taglon Village", "floor2": "Floor 2"},
         "items": {"candle": "This could be useful..", "chair": "A lonely chair.", "suit of armor": "Oooh shiny."}
     },
     "Floor 2": {
