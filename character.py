@@ -10,7 +10,7 @@ class Character(object):
 
         self.name = "unknown"
         self.menu_level = 0
-        self.room = "Tavern"
+        self.room = "Phoenix Tavern"
         self.authenticated = False
         self.muted_players = []
         self.afk_status = False
