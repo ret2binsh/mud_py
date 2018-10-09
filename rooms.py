@@ -7,47 +7,52 @@ picture = f.read()
 f.close()
 
 rooms = {
-    "Tavern": {
-        "description": "You're in a cozy tavern warmed by an open fire.",
-        "exits": { "outside": "Taglon Village", "teleporter": "Narnia"},
-        "items": { "beer": str(Beer())} ,
+    "Phoenix Tavern": {
+        "description": "You're in a dusty tavern in Phoenix, Az. There are a few patrons but no one seems to notice you.",
+        "exits": { "outside": "Downtown Phoenix", "train station": "Phoenix Train Station"},
+        "items": { "beer": str(Beer()), "clock": "The clock is stuck at 13:37"} ,
     },
-    "Narnia": {
-        "description": "You find yourself in an enchanted realm, far far from everything you know",
-        "exits": {"teleporter": "Tavern"},
-        "items": {"broken branches": "Hmm..Evidence of a recent struggle.", "sleigh": "A means to travel quickly?"}
+    "Phoenix Train Station": {
+        "description": "The Phoenix train station. From here you can travel to Flagstaff, Kingman, Tucson, or Yuma.",
+        "exits": {"tavern": "Phoenix Tavern"},
+        "items": {"Ticket Booth": "Purchase your tickets here!", "bench": "There is a rugged bum sleeping here."}
     },
-    "Taglon Village": {
-        "description": "You're standing outside and there is a tavern to your right and a mansion down the street. It's raining.",
-        "exits": { "tavern": "Tavern", "mansion": "Mansion", "bloodridge": "Bloodridge" },
-        "items": {"barrel": "An old whisky barrel.", "bloody spoon": "A possible murder weapon, but who uses a spoon? Honestly?"}
+    "Downtown Phoenix": {
+        "description": "You're standing outside in downtown Phoenix. The sky is dusty and the sun is setting...",
+        "exits": { "tavern": "Phoenix Tavern", "scottsdale": "Scottsdale", "luke afb": "Luke AFB Gate" },
+        "items": {"tumbleweed": "There's a weapon in here!", "motorcycle": "Old and broken down. Nothing to see here."}
     },
-    "Bloodridge": {
-        "description": "You're in the ancient town of Bloodridge. Home of the elder daemons.",
-        "exits": { "taglon village": "Taglon Village"},
-        "items": {"daemon blade": "A rustic blade. Looks evil."}
+    "Luke AFB Gate": {
+        "description": "You're outside the gate at Luke Air Force Base. The base appears to be overrun by ghouls.",
+        "exits": { "downtown": "Downtown Phoenix"},
+        "items": {"gate sign": "Welc me to Luk AFB. The premier F-16 tra ni g base!"}
     },
-    "Mansion": {
-        "description": "You're on the first floor of a creepy four-story mansion.",
-        "exits": {"outside": "Taglon Village", "floor2": "Floor 2"},
-        "items": {"candle": "This could be useful..", "chair": "A lonely chair.", "suit of armor": "Oooh shiny."}
+    "Scottsdale": {
+        "description": "Welcome to Scottsdale, Arizona. This town used to be a rich suburb but has fallen into ruin since the war..",
+        "exits": {"downtown": "Downtown Phoenix", "city center": "Scottsdale City Center"},
+        "items": {"porsche": "This could be useful..if it wasn't broken down", "golf bag": "I may be able to use something in here..", "drug needle": "Oooh shiny."}
     },
-    "Floor 2": {
-        "description": "You're on the second floor and filled with self doubt.",
-        "exits": {"floor1": "mansion", "floor3": "Floor 3"},
+    "Scottsdale City Center": {
+        "description": "The old city center of Scottsdale. Everything looks dingy and not at all what it used to be.",
+        "exits": {"fountain hills": "Fountain Hills", "mall": "Scottsdale Fashion Square Mall"},
         "items": {"light switch": "What the hell is this thing on the wall? Seems out of place.", "crooked picture": picture}
     },
-    "Floor 3": {
-        "description": "You're now on floor three and have serious doubts about this place.",
-        "exits": {"floor2": "Floor 2", "floor4": "Floor 4"},
+    "Fountain Hills": {
+        "description": "This small suburb was well known for its huge fountain at the center of the park.",
+        "exits": {"scottsdale": "Scottsdale City Center", "fountain": "Fountain Area"},
         "items": {"nothing here": "nothing here"}
     },
-    "Floor 4": {
+    "Fountain Area": {
+        "description": "I bet the fountain was a sight to see. Now it is just an empty basin with debris strewn about.",
+        "exits": {"town": "Fountain Hills"},
+        "items": {"nothing here": "nothing here"}
+    },
+    "Scottsdale Fashion Square Mall": {
         "description": "You're now on the top floor. A nightmarish phantom is approaching.",
-        "exits": {"floor3": "Floor 3", "floor5": "Floor 5"},
+        "exits": {"outside": "Scottsdale City Center", "floor2": "SFSM Floor2"},
         "items": {"sword": "Now this is what I need!!", "knife": "Uhhh not sure if this would be very useful.."}
     },
-    "Floor 5": {
+    "SFSM Floor2": {
         "description": "You're now on the top floor. A nightmarish phantom is approaching.",
         "exits": {"floor4": "Floor 4", "service elevator": "Mansion"},
         "items": {"coffee": "I need to stay awake!", "brown pants": "hmm... i might need a change of clothes if i get scared"}
