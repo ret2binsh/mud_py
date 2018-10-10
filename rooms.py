@@ -15,6 +15,6 @@ rooms = {
     "Phoenix Train Station": {
         "description": "The Phoenix train station. From here you can travel to Flagstaff, Kingman, Tucson, or Yuma.",
         "exits": {"tavern": "Phoenix Tavern"},
-        "items": []]
+        "items": []
     }
 }
