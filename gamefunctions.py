@@ -358,6 +358,30 @@ def mute_command(mud,id,command,params):
 
             mud.send_message(id, "-  %s" % muted_player)
 
+def pickup_command(mud,id,command,params):
+    """
+    Function that handles the pickup command. The player can pickup an item
+    based on the item's pickup_value. This item will be added to the player's
+    inventory.
+    """
+
+    # store the player's current room
+    rm = rooms[players[id].room]
+
+    # Iterate through items within the current room
+    for item in rm["items"]:
+        # Determine if the player is interacting with a valid object
+        if item.name == params:
+            # Send the description of the item
+            mud.send_message(id, item.description)
+
+    # Allows the player to get info on other players by interacting with them.
+    for pid,pl in players.items():
+        # Check through all players
+        if players[pid].name == params:
+            # Display the default character string
+            mud.send_message(id, str(players[pid]))
+
 def unmute_command(mud,id,command,params):
     """
     Function that performs the unmuting of a player. This will ensure that the
