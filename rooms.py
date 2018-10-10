@@ -9,7 +9,7 @@ f.close()
 rooms = {
     "Phoenix Tavern": {
         "description": "You're in a dusty tavern in Phoenix, Az. There are a few patrons but no one seems to notice you.",
-        "exits": { "outside": "Downtown Phoenix", "train station": "Phoenix Train Station"},
+        "exits": { "train station": "Phoenix Train Station"},
         "items": [items.Drink("Beer","A delicious looking beer!")] ,
     },
     "Phoenix Train Station": {
