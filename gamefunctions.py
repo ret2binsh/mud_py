@@ -308,7 +308,7 @@ def look_command(mud,id,command,params):
         for item in rm["items"]:
             roomItems.append(item.name)
     else:
-        roomItems.append("No items available.")
+        roomItems.append("")
 
     # send player a message containing the list of players in the room
     mud.send_message(id, "Players here: %s" % ", ".join(playersHere))
