@@ -28,38 +28,10 @@ class Stationary_Items(object):
 
         self.pickup_value = False
 
-class Beer(Stationary_Items):
+class Drink(Stationary_Items):
 
-    def __init__(self):
+    def __init__(self,name,description):
     # Initiate Beer item attributes
-        super(Beer,self).__init__()
-        self.name = "Beer"
-        self.description = "A delicious looking wheat beer."
-
-    def __str__(self):
-        # Define what the default string repesentation for the Beer Items
-        return ("%s: %s") % (self.name,self.description)
-
-class Clock(Stationary_Items):
-
-    def __init__(self):
-    # Initiate Beer item attributes
-        super(Clock,self).__init__()
-        self.name = "Clock"
-        self.description = "The clock is stuck at 13:37."
-
-    def __str__(self):
-        # Define what the default string repesentation for the Beer Items
-        return ("%s: %s") % (self.name,self.description)
-
-class TicketBooth(Stationary_Items):
-
-    def __init__(self):
-    # Initiate Beer item attributes
-        super(TicketBooth,self).__init__()
-        self.name = "Ticket Booth"
-        self.description = "Purchase your tickets here!"
-
-    def __str__(self):
-        # Define what the default string repesentation for the Beer Items
-        return ("%s: %s") % (self.name,self.description)
+        super(Drink,self).__init__()
+        self.name = name
+        self.description = description

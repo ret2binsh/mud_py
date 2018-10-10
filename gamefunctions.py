@@ -263,9 +263,9 @@ def interact_command(mud,id,command,params):
     # Iterate through items within the current room
     for item in rm["items"]:
         # Determine if the player is interacting with a valid object
-        if item == params:
+        if item.name == params:
             # Send the description of the item
-            mud.send_message(id, rm["items"][item])
+            mud.send_message(id, item.description)
 
     # Allows the player to get info on other players by interacting with them.
     for pid,pl in players.items():
@@ -302,10 +302,18 @@ def look_command(mud,id,command,params):
             # add their name to the list
             playersHere.append(players[pid].name)
 
+    roomItems = []
+    # iterate through available items and append to list
+    if rm["items"]:
+        for item in rm["items"]:
+            roomItems.append(item.name)
+    else:
+        roomItems.append("No items available.")
+
     # send player a message containing the list of players in the room
     mud.send_message(id, "Players here: %s" % ", ".join(playersHere))
 
-    mud.send_message(id, "Items available: %s" % ", ".join(rm["items"]))
+    mud.send_message(id, "Items available: %s" % ", ".join(roomItems))
 
     # send player a message containing the list of exits from this room
     mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
