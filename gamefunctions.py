@@ -280,7 +280,7 @@ def inventory_command(mud,id,command,params):
     players console.
     """
 
-    mud.send_message(id, "You have the following items: " + players[id].get_items())
+    mud.send_message(id, "You have the following items: " + ", ".join(players[id].get_items()))
 
 def look_command(mud,id,command,params):
     """
@@ -373,14 +373,25 @@ def pickup_command(mud,id,command,params):
         # Determine if the player is interacting with a valid object
         if item.name == params:
             # Send the description of the item
-            mud.send_message(id, item.description)
+            #mud.send_message(id, item.description)
+            for onHand in players[id].inventory:
+
+                if onHand.name == item.name:
+
+                    onHand.quantity =+ 1
+                    mud.send_message(id, "%s added to inventory" % item.name)
+                    break
+            else:
+                players[id].inventory.append(item)
+                mud.send_message(id, "%s added to inventory" % item.name)
+
 
     # Allows the player to get info on other players by interacting with them.
     for pid,pl in players.items():
         # Check through all players
         if players[pid].name == params:
             # Display the default character string
-            mud.send_message(id, str(players[pid]))
+            mud.send_message(id, "Hey no picking up on other players.")
 
 def unmute_command(mud,id,command,params):
     """

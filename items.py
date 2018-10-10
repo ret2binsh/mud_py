@@ -15,7 +15,7 @@ class PickUp_Items(object):
         # Creates generic attributes for the PickUp Items
 
         self.pickup_value = True
-        self.quantity = 0
+        self.quantity = 1
 
 class Stationary_Items(object):
     """
