@@ -39,3 +39,15 @@ class Beer(Stationary_Items):
     def __str__(self):
         # Define what the default string repesentation for the Beer Items
         return ("%s: %s") % (self.name,self.description)
+
+class Clock(Stationary_Items):
+
+    def __init__(self):
+    # Initiate Beer item attributes
+        super(Beer,self).__init__()
+        self.name = "Clock"
+        self.description = "The clock is stuck at 13:37."
+
+    def __str__(self):
+        # Define what the default string repesentation for the Beer Items
+        return ("%s: %s") % (self.name,self.description)

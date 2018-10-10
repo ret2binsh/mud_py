@@ -1,6 +1,6 @@
 import time
 
-from items import Beer
+import items
 
 f = open('hillary.txt','r')
 picture = f.read()
@@ -10,12 +10,12 @@ rooms = {
     "Phoenix Tavern": {
         "description": "You're in a dusty tavern in Phoenix, Az. There are a few patrons but no one seems to notice you.",
         "exits": { "outside": "Downtown Phoenix", "train station": "Phoenix Train Station"},
-        "items": { "beer": str(Beer()), "clock": "The clock is stuck at 13:37"} ,
+        "items": { "beer": str(items.Beer()), "clock": str(items.clock())} ,
     },
     "Phoenix Train Station": {
         "description": "The Phoenix train station. From here you can travel to Flagstaff, Kingman, Tucson, or Yuma.",
         "exits": {"tavern": "Phoenix Tavern"},
-        "items": {"Ticket Booth": "Purchase your tickets here!", "bench": "There is a rugged bum sleeping here."}
+        "items": {"ticket booth": "Purchase your tickets here!", "bench": "There is a rugged bum sleeping here."}
     },
     "Downtown Phoenix": {
         "description": "You're standing outside in downtown Phoenix. The sky is dusty and the sun is setting...",
