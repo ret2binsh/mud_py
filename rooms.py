@@ -15,7 +15,7 @@ rooms = {
     "Phoenix Train Station": {
         "description": "The Phoenix train station. From here you can travel to Flagstaff, Kingman, Tucson, or Yuma.",
         "exits": {"tavern": "Phoenix Tavern"},
-        "items": {"ticket booth": "Purchase your tickets here!", "bench": "There is a rugged bum sleeping here."}
+        "items": {"ticket booth": str(items.TicketBooth()), "bench": "There is a rugged bum sleeping here."}
     },
     "Downtown Phoenix": {
         "description": "You're standing outside in downtown Phoenix. The sky is dusty and the sun is setting...",

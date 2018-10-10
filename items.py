@@ -51,3 +51,15 @@ class Clock(Stationary_Items):
     def __str__(self):
         # Define what the default string repesentation for the Beer Items
         return ("%s: %s") % (self.name,self.description)
+
+class TicketBooth(Stationary_Items):
+
+    def __init__(self):
+    # Initiate Beer item attributes
+        super(TicketBooth,self).__init__()
+        self.name = "Ticket Booth"
+        self.description = "Purchase your tickets here!"
+
+    def __str__(self):
+        # Define what the default string repesentation for the Beer Items
+        return ("%s: %s") % (self.name,self.description)
