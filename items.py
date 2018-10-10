@@ -44,7 +44,7 @@ class Clock(Stationary_Items):
 
     def __init__(self):
     # Initiate Beer item attributes
-        super(Beer,self).__init__()
+        super(Clock,self).__init__()
         self.name = "Clock"
         self.description = "The clock is stuck at 13:37."
 
