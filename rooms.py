@@ -10,7 +10,7 @@ rooms = {
     "Phoenix Tavern": {
         "description": "You're in a dusty tavern in Phoenix, Az. There are a few patrons but no one seems to notice you.",
         "exits": { "outside": "Downtown Phoenix", "train station": "Phoenix Train Station"},
-        "items": { "beer": str(items.Beer()), "clock": str(items.clock())} ,
+        "items": { "beer": str(items.Beer()), "clock": str(items.Clock())} ,
     },
     "Phoenix Train Station": {
         "description": "The Phoenix train station. From here you can travel to Flagstaff, Kingman, Tucson, or Yuma.",
