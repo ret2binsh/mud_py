@@ -37,7 +37,7 @@ class Character(object):
             # iterates through the list which holds dictionary items
             for item in self.inventory:
                 # append each dictionary key which is a string of the item
-                inventoryList.append(item.name)
+                inventoryList.append("%s[%d]" % item.name,item.quantity)
             # return a string of the items list separated by a comma and a space
             return inventoryList
 
