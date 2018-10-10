@@ -22,8 +22,8 @@ class Character(object):
     def __str__(self):
         # Define the default string representation of the warrior class
 
-        return ("%s is a lvl %d %s with %d health.") % (self.name,self.level,
-                                                        self.type,self.health)
+        return ("%s is a lvl %d %s with %d health. \nPlease..no touching the %s.") % (self.name,self.level,
+                                                        self.type,self.health,self.type)
 
     def get_items(self):
         # Iterate through the characters items and display them to the console.
