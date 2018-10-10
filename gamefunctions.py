@@ -105,6 +105,8 @@ def process_commands(mud):
             "l": look_command,
             "mute": mute_command,
             "m": mute_command,
+            "pickup": pickup_command,
+            "p": pickup_command,
             "quit": quit_command,
             "q": quit_command,
             "say": say_command,
@@ -244,6 +246,7 @@ def help_command(mud,id,command,params):
     mud.send_message(id,"  [in]ventory          - Lists all of the items in your inventory, e.g. 'inventory'")
     mud.send_message(id,"  [l]ook               - Examines the surroundings, e.g. 'look'")
     mud.send_message(id,"  [un]/[m]ute <player> - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
+    mud.send_message(id,"  [p]ickup <item>      - Pickups an item, e.g. 'pickup Dagger.'")
     mud.send_message(id,"  [q]uit               - Closes the session to the MUD server.")
     mud.send_message(id,"  [s]ay <message>      - Says something out loud, e.g. 'say Hello'")
     mud.send_message(id,"  [sh]out <message>    - Shout something to all rooms, e.g. 'shout Hello!'")
