@@ -375,16 +375,16 @@ def pickup_command(mud,id,command,params):
     for item in rm["items"]:
         # Determine if the player is interacting with a valid object
         if item.name == params:
-            # Send the description of the item
-            #mud.send_message(id, item.description)
+            # Iterate through items in inventory
             for onHand in players[id].inventory:
-
+                # check if item currently exists in inventory
                 if onHand.name == item.name:
-
-                    onHand.quantity =+ 1
+                    # increment quantity and inform player
+                    onHand.quantity = onHand.quantity + 1
                     mud.send_message(id, "%s added to inventory" % item.name)
                     break
             else:
+                # append new item into the inventory
                 players[id].inventory.append(item)
                 mud.send_message(id, "%s added to inventory" % item.name)
 
