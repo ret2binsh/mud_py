@@ -236,7 +236,7 @@ def enter_command(mud,id,command,params):
 
 def help_command(mud,id,command,params):
     """
-    Provide the available commands within the help menu.
+    Provide the available commands within the help menu...
     """
 
     # send the player back the list of possible commands
