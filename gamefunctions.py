@@ -105,6 +105,8 @@ def process_commands(mud):
             "l": look_command,
             "mute": mute_command,
             "m": mute_command,
+            "pickup": pickup_command,
+            "p": pickup_command,
             "quit": quit_command,
             "q": quit_command,
             "say": say_command,
@@ -234,7 +236,7 @@ def enter_command(mud,id,command,params):
 
 def help_command(mud,id,command,params):
     """
-    Provide the available commands within the help menu.
+    Provide the available commands within the help menu...
     """
 
     # send the player back the list of possible commands
@@ -244,6 +246,7 @@ def help_command(mud,id,command,params):
     mud.send_message(id,"  [in]ventory          - Lists all of the items in your inventory, e.g. 'inventory'")
     mud.send_message(id,"  [l]ook               - Examines the surroundings, e.g. 'look'")
     mud.send_message(id,"  [un]/[m]ute <player> - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
+    mud.send_message(id,"  [p]ickup <item>      - Pickups an item, e.g. 'pickup Dagger.'")
     mud.send_message(id,"  [q]uit               - Closes the session to the MUD server.")
     mud.send_message(id,"  [s]ay <message>      - Says something out loud, e.g. 'say Hello'")
     mud.send_message(id,"  [sh]out <message>    - Shout something to all rooms, e.g. 'shout Hello!'")
@@ -280,7 +283,7 @@ def inventory_command(mud,id,command,params):
     players console.
     """
 
-    mud.send_message(id, "You have the following items: " + players[id].get_items())
+    mud.send_message(id, "You have the following items: " + ", ".join(players[id].get_items()))
 
 def look_command(mud,id,command,params):
     """
@@ -357,6 +360,41 @@ def mute_command(mud,id,command,params):
         for muted_player in players[id].muted_players:
 
             mud.send_message(id, "-  %s" % muted_player)
+
+def pickup_command(mud,id,command,params):
+    """
+    Function that handles the pickup command. The player can pickup an item
+    based on the item's pickup_value. This item will be added to the player's
+    inventory.
+    """
+
+    # store the player's current room
+    rm = rooms[players[id].room]
+
+    # Iterate through items within the current room
+    for item in rm["items"]:
+        # Determine if the player is interacting with a valid object
+        if item.name == params:
+            # Iterate through items in inventory
+            for onHand in players[id].inventory:
+                # check if item currently exists in inventory
+                if onHand.name == item.name:
+                    # increment quantity and inform player
+                    onHand.quantity = onHand.quantity + 1
+                    mud.send_message(id, "%s added to inventory" % item.name)
+                    break
+            else:
+                # append new item into the inventory
+                players[id].inventory.append(item)
+                mud.send_message(id, "%s added to inventory" % item.name)
+
+
+    # Allows the player to get info on other players by interacting with them.
+    for pid,pl in players.items():
+        # Check through all players
+        if players[pid].name == params:
+            # Display the default character string
+            mud.send_message(id, "Hey no picking up on other players.")
 
 def unmute_command(mud,id,command,params):
     """

@@ -15,6 +15,7 @@ class PickUp_Items(object):
         # Creates generic attributes for the PickUp Items
 
         self.pickup_value = True
+        self.quantity = 1
 
 class Stationary_Items(object):
     """
@@ -28,10 +29,23 @@ class Stationary_Items(object):
 
         self.pickup_value = False
 
-class Drink(Stationary_Items):
+class Drink(PickUp_Items):
 
     def __init__(self,name,description):
-    # Initiate Beer item attributes
+    # Initiate Drink item attributes
         super(Drink,self).__init__()
         self.name = name
         self.description = description
+        self.consume = True
+        self.healthBoost = .25
+
+class Weapon(PickUp_Items):
+
+    def __init__(self,name,description,power):
+    # Initiate Weapon item attributes
+        super(Weapon,self).__init__()
+        self.name = name
+        self.description = description
+        self.consume = False
+        self.power = 10 * power
+        self.equip = True

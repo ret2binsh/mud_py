@@ -17,7 +17,7 @@ class Character(object):
         self.gold = 0
         self.level = 1
         self.exp = 0
-        self.items = []
+        self.inventory = []
 
     def __str__(self):
         # Define the default string representation of the warrior class
@@ -29,18 +29,17 @@ class Character(object):
         # Iterate through the characters items and display them to the console.
         inventoryList = []    # create an empty list to hold each item
         # handles if the inventory is empty
-        if not self.items:
+        if not self.inventory:
 
-            return "nothing but air"
+            return ["nothing but air"]
 
         else:
             # iterates through the list which holds dictionary items
-            for item in self.items:
-                for key in item:
-                    # append each dictionary key which is a string of the item
-                    inventoryList.append(key)
+            for item in self.inventory:
+                # append each dictionary key which is a string of the item
+                inventoryList.append(("%s[%d]") % (item.name,item.quantity))
             # return a string of the items list separated by a comma and a space
-            return ", ".join(inventoryList)
+            return inventoryList
 
 class Warrior(Character):
     """
