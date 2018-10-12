@@ -227,7 +227,8 @@ def enter_command(mud,id,command,params):
                 mud.send_message(pid,"%s arrived via exit '%s'" % (players[id].name,ex))
 
         # send the player a message telling them where they are now
-        mud.send_message(id,"You arrive at '%s'" % players[id].room)
+        mud.send_message(id,"You arrive at '%s'" % players[id].room.name)
+        mud.send_message(id,players[id].room.longDescription)
 
     # the specified exit wasn't found in the current room
     else:
@@ -283,7 +284,10 @@ def inventory_command(mud,id,command,params):
     players console.
     """
 
-    mud.send_message(id, "You have the following items: " + ", ".join(players[id].get_items()))
+    mud.send_message(id, "You have the following items:")
+    for item in players[id].get_items():
+        # print each item on a separate line
+        mud.send_message(id, item)
 
 def look_command(mud,id,command,params):
     """

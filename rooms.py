@@ -6,23 +6,6 @@ f = open('hillary.txt','r')
 picture = f.read()
 f.close()
 
-roomExits = {
-    "Phoenix Tavern": PhoenixTavern(),
-    "Phoenix Train Station": PhoenixTrainStation()
-}
-
-rooms = {
-    "Phoenix Tavern": {
-        "description": "You're in a dusty tavern in Phoenix, Az. There are a few patrons but no one seems to notice you.",
-        "exits": { "train station": "Phoenix Train Station"},
-        "items": [items.Drink("Beer","A delicious looking beer!"),items.Weapon("Dagger","A rusty dagger.",1)] ,
-    },
-    "Phoenix Train Station": {
-        "description": "The Phoenix train station. From here you can travel to Flagstaff, Kingman, Tucson, or Yuma.",
-        "exits": {"tavern": "Phoenix Tavern"},
-        "items": []
-    }
-}
 
 class PhoenixTavern(object):
     def __init__(self):
@@ -39,3 +22,9 @@ class PhoenixTrainStation(object):
         self.description = "This is the Phoenix Train Station."
         self.items = []
         self.exits = ["Phoenix Tavern"]
+
+
+roomExits = {
+    "Phoenix Tavern": PhoenixTavern(),
+    "Phoenix Train Station": PhoenixTrainStation()
+}

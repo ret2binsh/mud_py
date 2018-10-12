@@ -1,4 +1,4 @@
-from rooms import *
+import rooms
 
 class Character(object):
     """
@@ -12,7 +12,7 @@ class Character(object):
 
         self.name = "unknown"
         self.menu_level = 0
-        self.room = PhoenixTavern()
+        self.room = rooms.PhoenixTavern()
         self.authenticated = False
         self.muted_players = []
         self.afk_status = False
