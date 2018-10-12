@@ -216,7 +216,7 @@ def enter_command(mud,id,command,params):
                 mud.send_message(pid,"%s left via exit '%s'" % (players[id].name,ex))
 
         # update the player's current room to the one the exit leads to
-        players[id].room = rm.exits.[ex]
+        players[id].room = rm.exits[ex]
         #rm = players[id].room
 
         # go through all the players in the game
