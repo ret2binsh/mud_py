@@ -1,5 +1,6 @@
 import rooms
 
+
 class Character(object):
     """
     Creates the generic attributes for our characters. Stores all of the
