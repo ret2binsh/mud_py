@@ -2,6 +2,7 @@ import hashlib
 
 from character import Warrior
 from rooms import *
+from banner import bannerText
 
 # empty list for tracking all players
 players = {}
@@ -42,11 +43,13 @@ def new_players_check(mud):
         players[id] = Warrior()
 
         # send the new player the game banner
-        banner = open('banner.txt', 'r')
-        mud.send_message(id, banner.read())
-        banner.close()
+        #banner = open('banner2.txt', 'r')
+        for line in bannerText:
+
+            mud.send_message(id, line)
+        #banner.close()
         # send the new player a prompt for the server password
-        mud.send_message(id,"Please enter the login password: ")
+        mud.send_message(id,u"\u001b[31mPlease enter the login password:\u001b[0m")
 
 def disconnected_players_check(mud):
     """

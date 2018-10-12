@@ -204,12 +204,12 @@ class MudServer(object):
 
     def _attempt_send(self,clid,data):
         # python 2/3 compatability fix - convert non-unicode string to unicode
-        if sys.version < '3' and type(data)!=unicode: data = unicode(data,"latin1")
+        if sys.version < '3' and type(data)!=unicode: data = unicode(data,"utf-8")
         try:
             # look up the client in the client map and use 'sendall' to send
             # the message string on the socket. 'sendall' ensures that all of
             # the data is sent in one go
-            self._clients[clid].socket.sendall(bytearray(data,"latin1"))
+            self._clients[clid].socket.sendall(bytearray(data,"utf-8"))
         # KeyError will be raised if there is no client with the given id in
         # the map
         except KeyError: pass
