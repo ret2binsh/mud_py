@@ -26,7 +26,7 @@ class PhoenixTavern(object):
         self.description = "You are in the Phoenix Tavern."
         self.items = [items.Drink("Beer","A delicious looking beer!"),items.Weapon("Dagger","A rusty dagger.",1)]
 
-    exits = { "train station": PhoenixTrainStation}
+    exits = { "train station": PhoenixTrainStation()}
 
 class PhoenixTrainStation(object):
     def __init__(self):
@@ -35,4 +35,4 @@ class PhoenixTrainStation(object):
         self.description = "This is the Phoenix Train Station."
         self.items = []
 
-    exits = {"tavern": PhoenixTavern}
+    exits = {"tavern": PhoenixTavern()}
