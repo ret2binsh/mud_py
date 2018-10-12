@@ -26,7 +26,7 @@ class PhoenixTavern(object):
         self.name = "Phoenix Tavern"
         self.longDescription = "You're in a dusty tavern in Phoenix, Az. There are a few patrons but no one seems to notice you."
         self.description = "You are in the Phoenix Tavern."
-        self.items = [items.Drink(u"%sBeer%s" % (color["white"],color["reset"]),"A delicious looking beer!"),items.Weapon(u"%sDagger%s" % (color["green"],color["reset"]),"A rusty dagger.",1)]
+        self.items = [items.Drink(u"%sBeer%s" % (color["white"],color["reset"]),"Beer","A delicious looking beer!"),items.Weapon(u"%sDagger%s" % (color["red"],color["reset"]),"Dagger","A rusty dagger.",1)]
         self.exits = ["Phoenix Train Station"]
 
 class PhoenixTrainStation(object):

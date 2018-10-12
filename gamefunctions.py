@@ -316,7 +316,7 @@ def look_command(mud,id,command,params):
     # iterate through available items and append to list
     if rm.items:
         for item in rm.items:
-            roomItems.append(item.name)
+            roomItems.append(item.displayName)
     else:
         roomItems.append("")
 
@@ -388,12 +388,12 @@ def pickup_command(mud,id,command,params):
                 if onHand.name == item.name:
                     # increment quantity and inform player
                     onHand.quantity = onHand.quantity + 1
-                    mud.send_message(id, "%s added to inventory" % item.name)
+                    mud.send_message(id, "%s added to inventory" % item.displayName)
                     break
             else:
                 # append new item into the inventory
                 players[id].inventory.append(item)
-                mud.send_message(id, "%s added to inventory" % item.name)
+                mud.send_message(id, "%s added to inventory" % item.displayName)
 
 
     # Allows the player to get info on other players by interacting with them.
