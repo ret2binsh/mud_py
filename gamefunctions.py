@@ -1,7 +1,7 @@
 import hashlib
 
 from character import Warrior
-from rooms import rooms
+from rooms import *
 
 # empty list for tracking all players
 players = {}
@@ -192,7 +192,7 @@ def create_player(mud,id,command,params):
         mud.send_message(id,"Welcome to the game, %s. Type '[h]elp' for a list of commands. Have fun!" % players[id].name)
 
         # send the new player the description of their current room
-        mud.send_message(id,rooms[players[id].room]["description"])
+        mud.send_message(id,players[id].room.longDescription)
 
 def enter_command(mud,id,command,params):
     """
@@ -203,26 +203,26 @@ def enter_command(mud,id,command,params):
     ex = params.lower()
 
     # store the player's current room
-    rm = rooms[players[id].room]
+    rm = players[id].room
 
     # if the specified exit is found in the room's exits list
-    if ex in rm["exits"]:
+    if ex in rm.exits:
 
         # go through all the players in the game
         for pid,pl in players.items():
             # if player is in the same room and isn't the player sending the command
-            if players[pid].room == players[id].room and pid!=id:
+            if players[pid].room.name == players[id].room.name and pid!=id:
                 # send them a message telling them that the player left the room
                 mud.send_message(pid,"%s left via exit '%s'" % (players[id].name,ex))
 
         # update the player's current room to the one the exit leads to
-        players[id].room = rm["exits"][ex]
-        rm = rooms[players[id].room]
+        players[id].room = rm.exits.[ex]
+        #rm = players[id].room
 
         # go through all the players in the game
         for pid,pl in players.items():
             # if player is in the same (new) room and isn't the player sending the command
-            if players[pid].room == players[id].room and pid!=id:
+            if players[pid].room.name == players[id].room.name and pid!=id:
                 # send them a message telling them that the player entered the room
                 mud.send_message(pid,"%s arrived via exit '%s'" % (players[id].name,ex))
 
@@ -261,10 +261,10 @@ def interact_command(mud,id,command,params):
     """
 
     # store the player's current room
-    rm = rooms[players[id].room]
+    rm = players[id].room
 
     # Iterate through items within the current room
-    for item in rm["items"]:
+    for item in rm.items:
         # Determine if the player is interacting with a valid object
         if item.name == params:
             # Send the description of the item
@@ -292,23 +292,23 @@ def look_command(mud,id,command,params):
     """
 
     # store the player's current room
-    rm = rooms[players[id].room]
+    rm = players[id].room
 
     # send the player back the description of their current room
-    mud.send_message(id, rm["description"])
+    mud.send_message(id, rm.description)
 
     playersHere = []
     # go through every player in the game
     for pid,pl in players.items():
         # if they're in the same room as the player
-        if players[pid].room == players[id].room:
+        if players[pid].room.name == players[id].room.name:
             # add their name to the list
             playersHere.append(players[pid].name)
 
     roomItems = []
     # iterate through available items and append to list
-    if rm["items"]:
-        for item in rm["items"]:
+    if rm.items:
+        for item in rm.items:
             roomItems.append(item.name)
     else:
         roomItems.append("")
@@ -319,7 +319,7 @@ def look_command(mud,id,command,params):
     mud.send_message(id, "Items available: %s" % ", ".join(roomItems))
 
     # send player a message containing the list of exits from this room
-    mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
+    mud.send_message(id, "Exits are: %s" % ", ".join(rm.exits))
 
 def mute_command(mud,id,command,params):
     """
@@ -369,10 +369,10 @@ def pickup_command(mud,id,command,params):
     """
 
     # store the player's current room
-    rm = rooms[players[id].room]
+    rm = players[id].room
 
     # Iterate through items within the current room
-    for item in rm["items"]:
+    for item in rm.items:
         # Determine if the player is interacting with a valid object
         if item.name == params:
             # Iterate through items in inventory
@@ -433,7 +433,7 @@ def say_command(mud,id,command,params):
     # go through every player in the game
     for pid,pl in players.items():
         # if they're in the same room as the player and not muted
-        if pl.room == players[id].room and players[id].name.lower() not in pl.muted_players:
+        if pl.room.name == players[id].room.name and players[id].name.lower() not in pl.muted_players:
             # send them a message telling them what the player said
             mud.send_message(pid,"%s says: %s" % (players[id].name,params) )
 
