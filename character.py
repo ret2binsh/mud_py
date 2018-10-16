@@ -1,6 +1,30 @@
 import rooms
 
 
+class Fists(object):
+    """
+    Simple class to use for when the character does not have a weapon equipped.
+    This will be added to the character.equpped_weapon attribute when using
+    the unequip command.
+    """
+
+    def __init__(self):
+
+        self.name = "Fists"
+        self.description = "wimpy looking fists"
+        self.power = 1
+
+class Naked(object):
+    """
+    Class for keeping track of when the user does not have armor equipped.
+    """
+
+    def __init__(self):
+
+        self.name = "Naked"
+        self.description = "absolutely nothing"
+        self.defense = 0
+
 class Character(object):
     """
     Creates the generic attributes for our characters. Stores all of the
@@ -25,8 +49,8 @@ class Character(object):
     def __str__(self):
         # Define the default string representation of the warrior class
 
-        return ("%s is a lvl %d %s with %d health. \nPlease..no touching the %s.") % (self.name,self.level,
-                                                        self.type,self.health,self.type)
+        return ("%s is a lvl %d %s with %d health.") % (self.name,self.level,
+                                                        self.type,self.health)
 
     def get_items(self):
         # Iterate through the characters items and display them to the console.
@@ -54,16 +78,33 @@ class Warrior(Character):
         # Generate Warrior specific attributes
         super(Warrior,self).__init__()
         self.type = "Warrior"
-        self.power = 5
+        self.equipped_weapon = Fists()
+        self.equipped_armor = Naked()
+        self.base_power = 5
+        self.power = self.base_power + self.equipped_weapon.power
         self.health = 100
         self.max_health = 100
-        self.defense = .9
+        self.base_defense = .9
+        self.defense = self.base_defense + self.equipped_armor.defense
         self.evade_chance = 20
         self.magic = 1
         self.critical = 1.2
         self.crit_chance = 10
-        self.equipped_weapon = {"Fists": 10}
         self.spells = {}
+
+    def equip(self,item):
+
+        if item.equip == "weapon":
+            # adds the weapon object to the characters equipped_weapon attrib
+            self.equipped_weapon = item
+            #self.power = self.base_power + item.power
+
+        elif item.equip == "armor":
+            # adds the armor object to the characters equipped_armor attrib
+            self.equipped_armor = item
+            #self.defense = self.base_defense + item.defense
+
+
 
 class Mage(Character):
     """
