@@ -56,6 +56,7 @@ class Warrior(Character):
         self.type = "Warrior"
         self.power = 5
         self.health = 100
+        self.max_health = 100
         self.defense = .9
         self.evade_chance = 20
         self.magic = 1
@@ -76,6 +77,7 @@ class Mage(Character):
         self.type = "Mage"
         self.power = 1
         self.health = 90
+        self.max_health = 90
         self.defense = .97
         self.evade_chance = 15
         self.magic = 5
@@ -96,6 +98,7 @@ class Rogue(Character):
         self.type = "Rogue"
         self.power = 3
         self.health = 100
+        self.max_health = 100
         self.defense = .95
         self.evade_chance = 10
         self.magic = 1
@@ -116,6 +119,7 @@ class Daemon(Character):
         self.type = "Daemon"
         self.power = 6
         self.health = 80
+        self.max_health = 80
         self.defense = .99
         self.evade_chance = 13
         self.magic = 3

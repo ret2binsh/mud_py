@@ -7,6 +7,20 @@ from banner import bannerText
 # empty list for tracking all players
 players = {}
 
+# ansi escape color codes
+color = {
+    "black": u"\u001b[30;1m",
+    "red": u"\u001b[31;1m",
+    "green": u"\u001b[32;1m",
+    "yellow": u"\u001b[33;1m",
+    "blue": u"\u001b[34;1m",
+    "magenta": u"\u001b[35;1m",
+    "cyan": u"\u001b[36;1m",
+    "white": u"\u001b[37;1m",
+    "reset": u"\u001b[0m"
+
+}
+
 def login_check(mud,id,command):
     """
     Reads the server password hash file and compares the user provided
@@ -143,6 +157,7 @@ def process_commands(mud):
                 # then execute that function
                 try:
                     command_list[command](*args)
+                    prompt_info(mud,id)
                 # If the command is not within the list then execute the
                 # unknown command function
                 except KeyError:
@@ -403,6 +418,22 @@ def pickup_command(mud,id,command,params):
             # Display the default character string
             mud.send_message(id, "Hey no picking up on other players.")
 
+def prompt_info(mud,id):
+    """
+    Function that handles the displaying of the player's prompt. This gathers
+    the pertinent information from the character to build the display and
+    sends it to the mud.send_prompt method:
+    [health/max_health]name$
+    """
+
+    h = players[id].health
+    m = players[id].max_health
+    n =  players[id].name
+
+    # creates the prompt and colors the username as yellow and current health as red
+    prompt = "%s%s%s[%s%d%s/%d]%s$%s" % (color["yellow"],n,color["reset"],color["red"],h,color["reset"],m,color["yellow"],color["reset"])
+    mud.send_prompt(id,prompt)
+
 def unmute_command(mud,id,command,params):
     """
     Function that performs the unmuting of a player. This will ensure that the
@@ -463,9 +494,15 @@ def unknown_command(mud,id,command,params):
     Handles the output provided when an unknown command is provided.
     """
 
-    # send back an 'unknown command' message
-    mud.send_message(id, "Unknown command '%s'" % command)
-    mud.send_message(id, "Ensure to use lowercase commands.")
+    # send back an 'unknown command' message unless empty. Then just do a carriage return
+    if command == "":
+
+        prompt_info(mud,id)
+
+    else:
+
+        mud.send_message(id, "Unknown command '%s'" % command)
+        mud.send_message(id, "Ensure to use lowercase commands.")
 
 def whisper_command(mud,id,command,params):
     """

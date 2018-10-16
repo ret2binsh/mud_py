@@ -188,6 +188,16 @@ class MudServer(object):
         # message on its own line
         self._attempt_send(to,message+"\n\r")
 
+    def send_prompt(self,to,prompt):
+        """
+        Sends the text in the 'prompt' parameter to the player with the id number
+        given in the 'to' parameter. The text will be printed out in the player's
+        terminal and used as there prompt.
+        """
+        # we make sure to put a newline on the end so the client receives the
+        # message on its own line
+        self._attempt_send(to,prompt+" ")
+
     def shutdown(self):
         """
         Closes down the server, disconnecting all clients and closing the
@@ -262,10 +272,10 @@ class MudServer(object):
             # client and move on to the next one
             if time.time() - cl.lastcheck < 5.0: continue
 
-            # send the client an invisible character. It doesn't actually matter what we send,
+            # send the client an ANSI reset color code. It doesn't actually matter what we send,
             # we're really just checking that data can still be written to the socket. If it can't,
             # an error will be raised and we'll know that the client has disconnected.
-            self._attempt_send(id,"\x00")
+            self._attempt_send(id,u"\u001b[0m")  # was a null character but that introduced a space "\x00"
 
             # update the last check time
             cl.lastcheck = time.time()
