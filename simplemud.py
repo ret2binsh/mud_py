@@ -20,18 +20,20 @@ author: Mark Frimston - mfrimston@gmail.com
 
 # standard library imports
 import time
-# import hashlib
+import os
+import sys
+
+# add the mud_py data directory to the python path variable
+mud_dir = os.path.join(os.getcwd() + '/data')
+sys.path.append(mud_dir)
 
 # local imports
 from mudserver import MudServer
 from gamefunctions import new_players_check
 from gamefunctions import disconnected_players_check
 from gamefunctions import process_commands
-# from character import Warrior
-# from rooms import rooms
 
-# global variables. Players keeps track of all joined users.
-# players = {}
+
 
 # start the server
 mud = MudServer()
