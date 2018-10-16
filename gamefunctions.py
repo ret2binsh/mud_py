@@ -57,13 +57,12 @@ def new_players_check(mud):
         players[id] = Warrior()
 
         # send the new player the game banner
-        #banner = open('banner2.txt', 'r')
         for line in bannerText:
 
             mud.send_message(id, line)
-        #banner.close()
+
         # send the new player a prompt for the server password
-        mud.send_message(id,u"\u001b[31mPlease enter the login password:\u001b[0m")
+        mud.send_message(id,"%sPlease enter the login password:%s" % (color["red"],color["reset"]))
 
 def disconnected_players_check(mud):
     """
@@ -211,6 +210,9 @@ def create_player(mud,id,command,params):
 
         # send the new player the description of their current room
         mud.send_message(id,players[id].room.longDescription)
+
+        # send player prompt to the user
+        prompt_info(mud,id)
 
 def enter_command(mud,id,command,params):
     """
