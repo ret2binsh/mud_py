@@ -29,7 +29,7 @@ def login_check(mud,id,command):
     """
 
     # Get server hash from pass file.
-    file_conn = open('pass', 'r')
+    file_conn = open('data/pass', 'r')
     serverSecret = file_conn.readline()
     file_conn.close()
 
