@@ -29,7 +29,7 @@ def login_check(mud,id,command):
     """
 
     # Get server hash from pass file.
-    file_conn = open('pass', 'r')
+    file_conn = open('data/pass', 'r')
     serverSecret = file_conn.readline()
     file_conn.close()
 
@@ -111,6 +111,8 @@ def process_commands(mud):
         command_list = {
             "enter": enter_command,
             "e": enter_command,
+            "equip": equip_command,
+            "eq": equip_command,
             "help": help_command,
             "h": help_command,
             "interact": interact_command,
@@ -255,6 +257,33 @@ def enter_command(mud,id,command,params):
         # send back an 'unknown exit' message
         mud.send_message(id, "Unknown exit '%s'" % ex)
 
+def equip_command(mud,id,command,params):
+    """
+    Function that handles equiping items. Will check the items attributes
+    to determine whether it can be equipped and if it is a weapon or armor.
+    """
+
+    for item in players[id].inventory:
+        # iterate through the inventory and then check if the typed item
+        # matches prior to determining if it can be equipped.
+        if item.name == params:
+
+            if item.equip:
+                # equip the item and then send the player a message
+                players[id].equip(item)
+                mud.send_message(id, "Equipped " + item.name)
+                break
+            else:
+                # if the item is not equippable inform the player
+                mud.send_message(id, "Cannot equip " + item.name)
+                break
+
+    else:
+        # inform the player if the item typed in isn't in the inventory
+        mud.send_message(id, "There's no " + params + " to equip.")
+
+
+
 def help_command(mud,id,command,params):
     """
     Provide the available commands within the help menu...
@@ -304,6 +333,11 @@ def inventory_command(mud,id,command,params):
     players console.
     """
 
+    weapon = players[id].equipped_weapon.description
+    armor = players[id].equipped_armor.description
+
+    mud.send_message(id, ("Your weapon of choice: %s" % weapon))
+    mud.send_message(id, ("You are wearing: %s" % armor))
     mud.send_message(id, "You have the following items:")
     for item in players[id].get_items():
         # print each item on a separate line
