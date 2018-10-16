@@ -31,9 +31,10 @@ class Stationary_Items(object):
 
 class Drink(PickUp_Items):
 
-    def __init__(self,name,description):
+    def __init__(self,displayName,name,description):
     # Initiate Drink item attributes
         super(Drink,self).__init__()
+        self.displayName = displayName
         self.name = name
         self.description = description
         self.consume = True
@@ -41,9 +42,10 @@ class Drink(PickUp_Items):
 
 class Weapon(PickUp_Items):
 
-    def __init__(self,name,description,power):
+    def __init__(self,displayName,name,description,power):
     # Initiate Weapon item attributes
         super(Weapon,self).__init__()
+        self.displayName = displayName
         self.name = name
         self.description = description
         self.consume = False

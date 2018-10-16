@@ -1,10 +1,25 @@
 import hashlib
 
 from character import Warrior
-from rooms import rooms
+from rooms import *
+from banner import bannerText
 
 # empty list for tracking all players
 players = {}
+
+# ansi escape color codes
+color = {
+    "black": u"\u001b[30;1m",
+    "red": u"\u001b[31;1m",
+    "green": u"\u001b[32;1m",
+    "yellow": u"\u001b[33;1m",
+    "blue": u"\u001b[34;1m",
+    "magenta": u"\u001b[35;1m",
+    "cyan": u"\u001b[36;1m",
+    "white": u"\u001b[37;1m",
+    "reset": u"\u001b[0m"
+
+}
 
 def login_check(mud,id,command):
     """
@@ -42,11 +57,12 @@ def new_players_check(mud):
         players[id] = Warrior()
 
         # send the new player the game banner
-        banner = open('banner.txt', 'r')
-        mud.send_message(id, banner.read())
-        banner.close()
+        for line in bannerText:
+
+            mud.send_message(id, line)
+
         # send the new player a prompt for the server password
-        mud.send_message(id,"Please enter the login password: ")
+        mud.send_message(id,"%sPlease enter the login password:%s" % (color["red"],color["reset"]))
 
 def disconnected_players_check(mud):
     """
@@ -140,6 +156,7 @@ def process_commands(mud):
                 # then execute that function
                 try:
                     command_list[command](*args)
+                    prompt_info(mud,id)
                 # If the command is not within the list then execute the
                 # unknown command function
                 except KeyError:
@@ -192,7 +209,10 @@ def create_player(mud,id,command,params):
         mud.send_message(id,"Welcome to the game, %s. Type '[h]elp' for a list of commands. Have fun!" % players[id].name)
 
         # send the new player the description of their current room
-        mud.send_message(id,rooms[players[id].room]["description"])
+        mud.send_message(id,players[id].room.longDescription)
+
+        # send player prompt to the user
+        prompt_info(mud,id)
 
 def enter_command(mud,id,command,params):
     """
@@ -200,34 +220,35 @@ def enter_command(mud,id,command,params):
     """
 
     # store the exit name
-    ex = params.lower()
+    ex = params  #used to be params.lower()
 
     # store the player's current room
-    rm = rooms[players[id].room]
+    rm = players[id].room
 
     # if the specified exit is found in the room's exits list
-    if ex in rm["exits"]:
+    if ex in rm.exits:
 
         # go through all the players in the game
         for pid,pl in players.items():
             # if player is in the same room and isn't the player sending the command
-            if players[pid].room == players[id].room and pid!=id:
+            if players[pid].room.name == players[id].room.name and pid!=id:
                 # send them a message telling them that the player left the room
                 mud.send_message(pid,"%s left via exit '%s'" % (players[id].name,ex))
 
         # update the player's current room to the one the exit leads to
-        players[id].room = rm["exits"][ex]
-        rm = rooms[players[id].room]
+        players[id].room = roomExits[ex]
+        #rm = players[id].room
 
         # go through all the players in the game
         for pid,pl in players.items():
             # if player is in the same (new) room and isn't the player sending the command
-            if players[pid].room == players[id].room and pid!=id:
+            if players[pid].room.name == players[id].room.name and pid!=id:
                 # send them a message telling them that the player entered the room
                 mud.send_message(pid,"%s arrived via exit '%s'" % (players[id].name,ex))
 
         # send the player a message telling them where they are now
-        mud.send_message(id,"You arrive at '%s'" % players[id].room)
+        mud.send_message(id,"You arrive at '%s'" % players[id].room.name)
+        mud.send_message(id,players[id].room.longDescription)
 
     # the specified exit wasn't found in the current room
     else:
@@ -261,10 +282,10 @@ def interact_command(mud,id,command,params):
     """
 
     # store the player's current room
-    rm = rooms[players[id].room]
+    rm = players[id].room
 
     # Iterate through items within the current room
-    for item in rm["items"]:
+    for item in rm.items:
         # Determine if the player is interacting with a valid object
         if item.name == params:
             # Send the description of the item
@@ -283,7 +304,10 @@ def inventory_command(mud,id,command,params):
     players console.
     """
 
-    mud.send_message(id, "You have the following items: " + ", ".join(players[id].get_items()))
+    mud.send_message(id, "You have the following items:")
+    for item in players[id].get_items():
+        # print each item on a separate line
+        mud.send_message(id, item)
 
 def look_command(mud,id,command,params):
     """
@@ -292,24 +316,24 @@ def look_command(mud,id,command,params):
     """
 
     # store the player's current room
-    rm = rooms[players[id].room]
+    rm = players[id].room
 
     # send the player back the description of their current room
-    mud.send_message(id, rm["description"])
+    mud.send_message(id, rm.description)
 
     playersHere = []
     # go through every player in the game
     for pid,pl in players.items():
         # if they're in the same room as the player
-        if players[pid].room == players[id].room:
+        if players[pid].room.name == players[id].room.name:
             # add their name to the list
             playersHere.append(players[pid].name)
 
     roomItems = []
     # iterate through available items and append to list
-    if rm["items"]:
-        for item in rm["items"]:
-            roomItems.append(item.name)
+    if rm.items:
+        for item in rm.items:
+            roomItems.append(item.displayName)
     else:
         roomItems.append("")
 
@@ -319,7 +343,7 @@ def look_command(mud,id,command,params):
     mud.send_message(id, "Items available: %s" % ", ".join(roomItems))
 
     # send player a message containing the list of exits from this room
-    mud.send_message(id, "Exits are: %s" % ", ".join(rm["exits"]))
+    mud.send_message(id, "Exits are: %s" % ", ".join(rm.exits))
 
 def mute_command(mud,id,command,params):
     """
@@ -369,10 +393,10 @@ def pickup_command(mud,id,command,params):
     """
 
     # store the player's current room
-    rm = rooms[players[id].room]
+    rm = players[id].room
 
     # Iterate through items within the current room
-    for item in rm["items"]:
+    for item in rm.items:
         # Determine if the player is interacting with a valid object
         if item.name == params:
             # Iterate through items in inventory
@@ -381,12 +405,12 @@ def pickup_command(mud,id,command,params):
                 if onHand.name == item.name:
                     # increment quantity and inform player
                     onHand.quantity = onHand.quantity + 1
-                    mud.send_message(id, "%s added to inventory" % item.name)
+                    mud.send_message(id, "%s added to inventory" % item.displayName)
                     break
             else:
                 # append new item into the inventory
                 players[id].inventory.append(item)
-                mud.send_message(id, "%s added to inventory" % item.name)
+                mud.send_message(id, "%s added to inventory" % item.displayName)
 
 
     # Allows the player to get info on other players by interacting with them.
@@ -395,6 +419,22 @@ def pickup_command(mud,id,command,params):
         if players[pid].name == params:
             # Display the default character string
             mud.send_message(id, "Hey no picking up on other players.")
+
+def prompt_info(mud,id):
+    """
+    Function that handles the displaying of the player's prompt. This gathers
+    the pertinent information from the character to build the display and
+    sends it to the mud.send_prompt method:
+    [health/max_health]name$
+    """
+
+    h = players[id].health
+    m = players[id].max_health
+    n =  players[id].name
+
+    # creates the prompt and colors the username as yellow and current health as red
+    prompt = "%s%s%s[%s%d%s/%d]%s$%s" % (color["yellow"],n,color["reset"],color["red"],h,color["reset"],m,color["yellow"],color["reset"])
+    mud.send_prompt(id,prompt)
 
 def unmute_command(mud,id,command,params):
     """
@@ -433,7 +473,7 @@ def say_command(mud,id,command,params):
     # go through every player in the game
     for pid,pl in players.items():
         # if they're in the same room as the player and not muted
-        if pl.room == players[id].room and players[id].name.lower() not in pl.muted_players:
+        if pl.room.name == players[id].room.name and players[id].name.lower() not in pl.muted_players:
             # send them a message telling them what the player said
             mud.send_message(pid,"%s says: %s" % (players[id].name,params) )
 
@@ -456,9 +496,15 @@ def unknown_command(mud,id,command,params):
     Handles the output provided when an unknown command is provided.
     """
 
-    # send back an 'unknown command' message
-    mud.send_message(id, "Unknown command '%s'" % command)
-    mud.send_message(id, "Ensure to use lowercase commands.")
+    # send back an 'unknown command' message unless empty. Then just do a carriage return
+    if command == "":
+
+        prompt_info(mud,id)
+
+    else:
+
+        mud.send_message(id, "Unknown command '%s'" % command)
+        mud.send_message(id, "Ensure to use lowercase commands.")
 
 def whisper_command(mud,id,command,params):
     """

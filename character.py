@@ -1,3 +1,6 @@
+import rooms
+
+
 class Character(object):
     """
     Creates the generic attributes for our characters. Stores all of the
@@ -10,7 +13,7 @@ class Character(object):
 
         self.name = "unknown"
         self.menu_level = 0
-        self.room = "Phoenix Tavern"
+        self.room = rooms.PhoenixTavern()
         self.authenticated = False
         self.muted_players = []
         self.afk_status = False
@@ -37,7 +40,7 @@ class Character(object):
             # iterates through the list which holds dictionary items
             for item in self.inventory:
                 # append each dictionary key which is a string of the item
-                inventoryList.append(("%s[%d]") % (item.name,item.quantity))
+                inventoryList.append(("%s[%d]") % (item.displayName,item.quantity))
             # return a string of the items list separated by a comma and a space
             return inventoryList
 
@@ -53,6 +56,7 @@ class Warrior(Character):
         self.type = "Warrior"
         self.power = 5
         self.health = 100
+        self.max_health = 100
         self.defense = .9
         self.evade_chance = 20
         self.magic = 1
@@ -73,6 +77,7 @@ class Mage(Character):
         self.type = "Mage"
         self.power = 1
         self.health = 90
+        self.max_health = 90
         self.defense = .97
         self.evade_chance = 15
         self.magic = 5
@@ -93,6 +98,7 @@ class Rogue(Character):
         self.type = "Rogue"
         self.power = 3
         self.health = 100
+        self.max_health = 100
         self.defense = .95
         self.evade_chance = 10
         self.magic = 1
@@ -113,6 +119,7 @@ class Daemon(Character):
         self.type = "Daemon"
         self.power = 6
         self.health = 80
+        self.max_health = 80
         self.defense = .99
         self.evade_chance = 13
         self.magic = 3
