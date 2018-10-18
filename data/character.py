@@ -57,12 +57,26 @@ class Character(object):
         self.level = 1
         self.exp = 0
         self.inventory = []
+        self.equipped_weapon = Fists()
+        self.equipped_armor = Naked()
 
     def __str__(self):
         # Define the default string representation of the warrior class
 
         return ("%s is a lvl %d %s with %d health.") % (self.name,self.level,
                                                         self.type,self.health)
+
+    def equip(self,item):
+        # equips either a weapon or armor and updates the power/def
+        if item.equip == "weapon":
+            # adds the weapon object to the characters equipped_weapon attrib
+            self.equipped_weapon = item
+            self.power = self.base_power + self.equipped_weapon.power
+
+        elif item.equip == "armor":
+            # adds the armor object to the characters equipped_armor attrib
+            self.equipped_armor = item
+            self.defense = self.base_defense + self.equipped_armor.defense
 
     def get_items(self):
         # Iterate through the characters items and display them to the console.
@@ -111,8 +125,6 @@ class Warrior(Character):
         # Generate Warrior specific attributes
         super(Warrior,self).__init__()
         self.type = "Warrior"
-        self.equipped_weapon = Fists()
-        self.equipped_armor = Naked()
         self.base_power = 5
         self.power = self.base_power + self.equipped_weapon.power
         self.health = 100
@@ -124,20 +136,6 @@ class Warrior(Character):
         self.critical = 1.2
         self.crit_chance = 10
         self.spells = {}
-
-    def equip(self,item):
-
-        if item.equip == "weapon":
-            # adds the weapon object to the characters equipped_weapon attrib
-            self.equipped_weapon = item
-            #self.power = self.base_power + item.power
-
-        elif item.equip == "armor":
-            # adds the armor object to the characters equipped_armor attrib
-            self.equipped_armor = item
-            #self.defense = self.base_defense + item.defense
-
-
 
 class Mage(Character):
     """
