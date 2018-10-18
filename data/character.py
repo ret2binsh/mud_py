@@ -96,20 +96,28 @@ class Character(object):
 
     def get_status(self):
 
+        # determine the offset lengths for all left-side dynamic numbers
+        a = len(str(self.health)) + len(str(self.max_health))
+        b = len(str(self.exp))
+        c = len(str(self.base_power)) + len(str(self.equipped_weapon.power)) + len(str(self.power))
+        d = len(str(self.base_defense)) + len(str(self.equipped_armor.defense)) + len(str(self.defense))
+
+        # multipled spaces and subtracted them by the dynamic length of the left-side Variables
+        # this ensures everything stays nicely formatted. Returns a list of strings 
         status_screen = ["********************************************************************************",
                          " Name  :  {0}{1}{2}".format(color["yellow"],self.name,color["reset"]),
                          " Gold  :  {0}{1}{2}".format(color["yellow"],self.gold,color["reset"]),
-                         " Level :  {0}{1}{2}    Class :  {3}{4}{5}    Current Room :  {6}{7}{8}".format(color["yellow"],
+                         " Level :  {0}{1}{2}    Class :  {3}{4}{5}     Current Room :  {6}{7}{8}".format(color["yellow"],
                             self.level,color["reset"],color["yellow"],self.type,color["reset"],color["yellow"],self.room.name,color["reset"]),
                          "********************************************************************************",
-                         " Health     :  {0}{1}{2}/{3}{4}{5}                               Weapon:  {6}{7}{8}".format(color["red"],
+                         (" Health     :  {0}{1}{2}/{3}{4}{5}" + " "*(37-a) + "Weapon:  {6}{7}{8}").format(color["red"],
                          self.health,color["reset"],color["yellow"],self.max_health,color["reset"],color["red"],self.equipped_weapon.name,color["reset"]),
-                         " Experience :  {0}{1}{2}                                     Armor :  {3}{4}{5}".format(color["yellow"],
+                         (" Experience :  {0}{1}{2}" + " "*(38-b) + "Armor :  {3}{4}{5}").format(color["yellow"],
                          self.exp,color["reset"],color["red"],self.equipped_armor.name,color["reset"]),
                          "********************************************************************************",
-                         " Attack Power :  {0}({1}{2}{3})/{4}                              Critical :  {5}{6}{7}".format(self.base_power,
+                         (" Attack Power :  {0}({1}{2}{3})/{4}" + " "*(33-c) + "Critical :  {5}{6}{7}").format(self.base_power,
                          color["blue"],self.equipped_weapon.power,color["reset"],self.power,color["blue"],self.critical,color["reset"]),
-                         " Defense      :  {0}({1}{2}{3})/{4}                          Crit %   :  {5}{6}{7}".format(self.base_defense,
+                         (" Defense      :  {0}({1}{2}{3})/{4}" + " "*(33-d) + "Crit %   :  {5}{6}{7}").format(self.base_defense,
                          color["blue"],self.equipped_armor.defense,color["reset"],self.defense,color["blue"],self.crit_chance,color["reset"]),
                          "********************************************************************************"]
 
