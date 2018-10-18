@@ -1,5 +1,17 @@
 import rooms
 
+color = {
+    "black": u"\u001b[30;1m",
+    "red": u"\u001b[31;1m",
+    "green": u"\u001b[32;1m",
+    "yellow": u"\u001b[33;1m",
+    "blue": u"\u001b[34;1m",
+    "magenta": u"\u001b[35;1m",
+    "cyan": u"\u001b[36;1m",
+    "white": u"\u001b[37;1m",
+    "reset": u"\u001b[0m"
+
+}
 
 class Fists(object):
     """
@@ -45,12 +57,26 @@ class Character(object):
         self.level = 1
         self.exp = 0
         self.inventory = []
+        self.equipped_weapon = Fists()
+        self.equipped_armor = Naked()
 
     def __str__(self):
         # Define the default string representation of the warrior class
 
         return ("%s is a lvl %d %s with %d health.") % (self.name,self.level,
                                                         self.type,self.health)
+
+    def equip(self,item):
+        # equips either a weapon or armor and updates the power/def
+        if item.equip == "weapon":
+            # adds the weapon object to the characters equipped_weapon attrib
+            self.equipped_weapon = item
+            self.power = self.base_power + self.equipped_weapon.power
+
+        elif item.equip == "armor":
+            # adds the armor object to the characters equipped_armor attrib
+            self.equipped_armor = item
+            self.defense = self.base_defense + self.equipped_armor.defense
 
     def get_items(self):
         # Iterate through the characters items and display them to the console.
@@ -68,6 +94,35 @@ class Character(object):
             # return a string of the items list separated by a comma and a space
             return inventoryList
 
+    def get_status(self):
+
+        # determine the offset lengths for all left-side dynamic numbers
+        a = len(str(self.health)) + len(str(self.max_health))
+        b = len(str(self.exp))
+        c = len(str(self.base_power)) + len(str(self.equipped_weapon.power)) + len(str(self.power))
+        d = len(str(self.base_defense)) + len(str(self.equipped_armor.defense)) + len(str(self.defense))
+
+        # multipled spaces and subtracted them by the dynamic length of the left-side Variables
+        # this ensures everything stays nicely formatted. Returns a list of strings 
+        status_screen = ["********************************************************************************",
+                         " Name  :  {0}{1}{2}".format(color["yellow"],self.name,color["reset"]),
+                         " Gold  :  {0}{1}{2}".format(color["yellow"],self.gold,color["reset"]),
+                         " Level :  {0}{1}{2}    Class :  {3}{4}{5}     Current Room :  {6}{7}{8}".format(color["yellow"],
+                            self.level,color["reset"],color["yellow"],self.type,color["reset"],color["yellow"],self.room.name,color["reset"]),
+                         "********************************************************************************",
+                         (" Health     :  {0}{1}{2}/{3}{4}{5}" + " "*(37-a) + "Weapon:  {6}{7}{8}").format(color["red"],
+                         self.health,color["reset"],color["yellow"],self.max_health,color["reset"],color["red"],self.equipped_weapon.name,color["reset"]),
+                         (" Experience :  {0}{1}{2}" + " "*(38-b) + "Armor :  {3}{4}{5}").format(color["yellow"],
+                         self.exp,color["reset"],color["red"],self.equipped_armor.name,color["reset"]),
+                         "********************************************************************************",
+                         (" Attack Power :  {0}({1}{2}{3})/{4}" + " "*(33-c) + "Critical :  {5}{6}{7}").format(self.base_power,
+                         color["blue"],self.equipped_weapon.power,color["reset"],self.power,color["blue"],self.critical,color["reset"]),
+                         (" Defense      :  {0}({1}{2}{3})/{4}" + " "*(33-d) + "Crit %   :  {5}{6}{7}").format(self.base_defense,
+                         color["blue"],self.equipped_armor.defense,color["reset"],self.defense,color["blue"],self.crit_chance,color["reset"]),
+                         "********************************************************************************"]
+
+        return status_screen
+
 class Warrior(Character):
     """
     Creates the Warrior class which inherits all of the properties from the
@@ -78,8 +133,6 @@ class Warrior(Character):
         # Generate Warrior specific attributes
         super(Warrior,self).__init__()
         self.type = "Warrior"
-        self.equipped_weapon = Fists()
-        self.equipped_armor = Naked()
         self.base_power = 5
         self.power = self.base_power + self.equipped_weapon.power
         self.health = 100
@@ -91,20 +144,6 @@ class Warrior(Character):
         self.critical = 1.2
         self.crit_chance = 10
         self.spells = {}
-
-    def equip(self,item):
-
-        if item.equip == "weapon":
-            # adds the weapon object to the characters equipped_weapon attrib
-            self.equipped_weapon = item
-            #self.power = self.base_power + item.power
-
-        elif item.equip == "armor":
-            # adds the armor object to the characters equipped_armor attrib
-            self.equipped_armor = item
-            #self.defense = self.base_defense + item.defense
-
-
 
 class Mage(Character):
     """
