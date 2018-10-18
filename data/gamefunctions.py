@@ -441,11 +441,14 @@ def pickup_command(mud,id,command,params):
                 if onHand.name == item.name:
                     # increment quantity and inform player
                     onHand.quantity = onHand.quantity + 1
+                    rm.items.remove(item)
                     mud.send_message(id, "%s added to inventory" % item.displayName)
+
                     break
             else:
                 # append new item into the inventory
                 players[id].inventory.append(item)
+                rm.items.remove(item)
                 mud.send_message(id, "%s added to inventory" % item.displayName)
 
 
