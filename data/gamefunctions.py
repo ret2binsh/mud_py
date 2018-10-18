@@ -131,6 +131,8 @@ def process_commands(mud):
             "s": say_command,
             "shout": shout_command,
             "sh": shout_command,
+            "status": status_command,
+            "st": status_command,
             "whisper": whisper_command,
             "w": whisper_command,
             "unmute": unmute_command,
@@ -524,6 +526,18 @@ def shout_command(mud,id,command,params):
         if players[id].name.lower() not in pl.muted_players:
             # send message to everyone
             mud.send_message(pid,"%s shouts: %s" % (players[id].name,params))
+
+def status_command(mud,id,command,params):
+    """
+    Function that handles the status command. This will display a huge listing
+    of all of the stats and attributes for the player.
+    """
+
+    status_display = players[id].get_status()
+
+    for line in status_display:
+
+        mud.send_message(id, line)
 
 def unknown_command(mud,id,command,params):
     """
