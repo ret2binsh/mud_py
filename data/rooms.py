@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import time
 import items
-"""
-f = open('hillary.txt','r')
-picture = f.read()
-f.close()
-"""
 
 color = {
     "black": u"\u001b[30;1m",
