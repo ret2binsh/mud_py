@@ -28,7 +28,7 @@ class PhoenixTrainStation(object):
         self.name = "Phoenix Train Station"
         self.longDescription = "The Phoenix train station. From here you can travel to Flagstaff, Kingman, Tucson, or Yuma."
         self.description = "This is the Phoenix Train Station."
-        self.items = []
+        self.items = [items.Weapon(u"%sBuster Sword%s" % (color["red"],color["reset"]),"Dagger","savage looking buster sword.",10)]
         self.exits = ["Phoenix Tavern"]
 
 
