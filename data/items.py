@@ -39,7 +39,7 @@ class Drink(PickUp_Items):
         self.description = description
         self.consume = True
         self.equip = False
-        self.healthBoost = .25
+        self.healthBoost = .2
 
 class Weapon(PickUp_Items):
 

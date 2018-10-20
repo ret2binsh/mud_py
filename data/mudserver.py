@@ -283,7 +283,7 @@ class MudServer(object):
     def _check_for_stale_state(self):
 
         # go through all the clients
-        for id,cl in list(self._clients.items()):
+        for user,cl in list(self._clients.items()):
 
             # Checks if the client is in the authenticated state
             if cl.authenticated:
@@ -298,7 +298,7 @@ class MudServer(object):
 
             # Disconnects client for inactivity
             self.send_message(user, "You have been inactive for too long. Disconnecting...")
-            self._handle_disconnect(id)
+            self._handle_disconnect(user)
 
 
     def _check_for_messages(self):
