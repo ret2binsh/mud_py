@@ -192,7 +192,7 @@ class MudServer(object):
         """
         Sends the text in the 'prompt' parameter to the player with the id number
         given in the 'to' parameter. The text will be printed out in the player's
-        terminal and used as there prompt.
+        terminal and used as their prompt.
         """
         # we make sure to put a newline on the end so the client receives the
         # message on its own line
@@ -214,7 +214,7 @@ class MudServer(object):
 
     def _attempt_send(self,clid,data):
         # python 2/3 compatability fix - convert non-unicode string to unicode
-        if sys.version < '3' and type(data)!=unicode: data = unicode(data,"utf-8")
+        if sys.version < '3' and not isinstance(data,unicode): data = unicode(data,"utf-8")
         try:
             # look up the client in the client map and use 'sendall' to send
             # the message string on the socket. 'sendall' ensures that all of
@@ -266,7 +266,7 @@ class MudServer(object):
     def _check_for_disconnected(self):
 
         # go through all the clients
-        for id,cl in list(self._clients.items()):
+        for user,cl in list(self._clients.items()):
 
             # if we last checked the client less than 5 seconds ago, skip this
             # client and move on to the next one
@@ -275,7 +275,7 @@ class MudServer(object):
             # send the client an ANSI reset color code. It doesn't actually matter what we send,
             # we're really just checking that data can still be written to the socket. If it can't,
             # an error will be raised and we'll know that the client has disconnected.
-            self._attempt_send(id,u"\u001b[0m")  # was a null character but that introduced a space "\x00"
+            self._attempt_send(user,u"\u001b[0m")  # was a null character but that introduced a space "\x00"
 
             # update the last check time
             cl.lastcheck = time.time()
@@ -297,14 +297,14 @@ class MudServer(object):
                 if time.time() - cl.lastactive < 30: continue
 
             # Disconnects client for inactivity
-            self.send_message(id, "You have been inactive for too long. Disconnecting...")
+            self.send_message(user, "You have been inactive for too long. Disconnecting...")
             self._handle_disconnect(id)
 
 
     def _check_for_messages(self):
 
         # go through all the clients
-        for id,cl in list(self._clients.items()):
+        for user,cl in list(self._clients.items()):
 
             # we use 'select' to test whether there is data waiting to be read from
             # the client socket. The function takes 3 lists of sockets, the first being
@@ -339,12 +339,12 @@ class MudServer(object):
                     # add a command occurence to the new events list with the
                     # player's id number, the command and its parameters
                     # removed command.lower()
-                    self._new_events.append((self._EVENT_COMMAND,id,command,params))
+                    self._new_events.append((self._EVENT_COMMAND,user,command,params))
 
             # if there is a problem reading from the socket (e.g. the client has
             # disconnected) a socket error will be raised
             except socket.error:
-                self._handle_disconnect(id)
+                self._handle_disconnect(user)
 
 
     def _handle_disconnect(self,clid):

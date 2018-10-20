@@ -103,7 +103,7 @@ class Character(object):
         d = len(str(self.base_defense)) + len(str(self.equipped_armor.defense)) + len(str(self.defense))
 
         # multipled spaces and subtracted them by the dynamic length of the left-side Variables
-        # this ensures everything stays nicely formatted. Returns a list of strings 
+        # this ensures everything stays nicely formatted. Returns a list of strings
         status_screen = ["********************************************************************************",
                          " Name  :  {0}{1}{2}".format(color["yellow"],self.name,color["reset"]),
                          " Gold  :  {0}{1}{2}".format(color["yellow"],self.gold,color["reset"]),
