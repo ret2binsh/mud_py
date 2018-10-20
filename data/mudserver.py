@@ -298,7 +298,7 @@ class MudServer(object):
 
             # Disconnects client for inactivity
             self.send_message(user, "You have been inactive for too long. Disconnecting...")
-            self._handle_disconnect(id)
+            self._handle_disconnect(user)
 
 
     def _check_for_messages(self):
