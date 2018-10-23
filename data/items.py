@@ -84,61 +84,25 @@ class Armor(PickUp_Items):
 
 
 tier1Weapons = [
-    Weapon(
-        "Dagger",
-        "A rusty dagger.",
-        1
-        ),
-    Weapon(
-        "Broad Sword",
-        "A boring sword.",
-        1
-        ),
-    Weapon(
-        "Javelin",
-        "A pokey weapon.",
-        1
-        ),
-    Weapon(
-        "Pistol",
-        "A crummy pistol.",
-        1
-        )
+    Weapon("Dagger","A rusty dagger.",1),
+    Weapon("Broad Sword","A boring sword.",1),
+    Weapon("Javelin","A pokey weapon.",1),
+    Weapon("Pistol","A crummy pistol.",1)
     ]
 
 tier1Armor = [
-    Armor(
-        "Chain Mail",
-        "A heavy set of chain mail.",
-        1
-        ),
-    Armor(
-        "Leather Hide",
-        "Crude garments made from leather.",
-        1
-        ),
-    Armor(
-        "Black Tights",
-        "Rather tight looking.",
-        1
-        )
+    Armor("Chain Mail","A heavy set of chain mail.",1),
+    Armor("Leather Hide","Crude garments made from leather.",1),
+    Armor("Black Tights","Rather tight looking.",1)
     ]
 
 tier1Drinks = [
-    Drink(
-        "Beer",
-        "Warm beer"
-        ),
-    Drink(
-        "Wine",
-        "Dank wine"
-        ),
-    Drink(
-        "Orange Juice",
-        "Spoiled orange juice."
-        )
+    Drink("Beer","Warm beer"),
+    Drink("Wine","Dank wine"),
+    Drink("Orange Juice","Spoiled orange juice.")
     ]
 
+# list of tier1 items. used for random function
 tier1Items = [tier1Armor,tier1Drinks,tier1Weapons]
 
 def random_items():
@@ -147,9 +111,8 @@ def random_items():
     """
 
     itemsList = []  #list of items to be returned
-
-    for i in range(0,random.choice([1,1,1,2])):
-        # randomly determine number of items and select item from lists
+    # random choice number of items. weighted towards 1 item
+    for i in range(0,random.choice([1,1,1,2,3])):
         type = random.choice(tier1Items)
         itemsList.append(random.choice(type))
 
