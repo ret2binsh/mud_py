@@ -304,7 +304,7 @@ def help_command(mud,user,command,params):
     mud.send_message(user,"  [s]ay <message>      - Says something out loud, e.g. 'say Hello'")
     mud.send_message(user,"  [sh]out <message>    - Shout something to all rooms, e.g. 'shout Hello!'")
     mud.send_message(user,"  [w]hisper            - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
-    mud.sned_message(user,"  [wh]o                - Displays who and where each player are, e.g. 'player1 is in the Phoenix Tavern'")
+    mud.send_message(user,"  [wh]o                - Displays who and where each player are, e.g. 'player1 is in the Phoenix Tavern'")
 
 def interact_command(mud,user,command,params):
     """
@@ -559,11 +559,11 @@ def unknown_command(mud,user,command,params):
         mud.send_message(user, "Unknown command '%s'" % command)
         mud.send_message(user, "Ensure to use lowercase commands.")
 
-def who_command(mud,user,command):
+def who_command(mud,user,command,params):
 	"""
 	Displays all the players in the game and which room they are located.
 	"""
-	for pid in player.items():
+	for pid,pl in players.items():
 		mud.send_message(user,"%s is currently located: %s" % (players[pid].name,players[pid].room.name))
 
 def whisper_command(mud,user,command,params):
