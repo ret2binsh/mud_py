@@ -93,7 +93,7 @@ tier1Weapons = [
 tier1Armor = [
     Armor("Chain Mail","A heavy set of chain mail.",1),
     Armor("Leather Hide","Crude garments made from leather.",1),
-    Armor("Black Tights","Rather tight looking.",1)
+    Armor("Black Tights","Rather tight looking pants.",1)
     ]
 
 tier1Drinks = [

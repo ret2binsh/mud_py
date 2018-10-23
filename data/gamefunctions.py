@@ -1,10 +1,6 @@
 import hashlib
 
 from character import Warrior
-<<<<<<< Updated upstream
-from rooms import *
-=======
->>>>>>> Stashed changes
 from banner import bannerText
 
 # empty list for tracking all players
@@ -138,11 +134,8 @@ def process_commands(mud):
             "st": status_command,
             "whisper": whisper_command,
             "w": whisper_command,
-<<<<<<< Updated upstream
 			"who": who_command,
 			"wh": who_command,
-=======
->>>>>>> Stashed changes
             "unmute": unmute_command,
             "un": unmute_command,
             }
@@ -238,11 +231,7 @@ def enter_command(mud,user,command,params):
     rm = players[user].room
 
     # if the specified exit is found in the room's exits list
-<<<<<<< Updated upstream
-    if ex in rm.exits:
-=======
     if ex in rm.exits.keys():
->>>>>>> Stashed changes
 
         # go through all the players in the game
         for pid,pl in players.items():
@@ -252,11 +241,7 @@ def enter_command(mud,user,command,params):
                 mud.send_message(pid,"%s left via exit '%s'" % (players[user].name,ex))
 
         # update the player's current room to the one the exit leads to
-<<<<<<< Updated upstream
-        players[user].room = roomExits[ex]
-=======
         players[user].room = rm.enter_room(ex)
->>>>>>> Stashed changes
 
         # go through all the players in the game
         for pid,pl in players.items():
@@ -318,10 +303,7 @@ def help_command(mud,user,command,params):
     mud.send_message(user,"  [s]ay <message>      - Says something out loud, e.g. 'say Hello'")
     mud.send_message(user,"  [sh]out <message>    - Shout something to all rooms, e.g. 'shout Hello!'")
     mud.send_message(user,"  [w]hisper            - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
-<<<<<<< Updated upstream
     mud.send_message(user,"  [wh]o                - Displays who and where each player are, e.g. 'player1 is in the Phoenix Tavern'")
-=======
->>>>>>> Stashed changes
 
 def interact_command(mud,user,command,params):
     """
@@ -398,11 +380,7 @@ def look_command(mud,user,command,params):
     mud.send_message(user, "Items available: %s" % ", ".join(roomItems))
 
     # send player a message containing the list of exits from this room
-<<<<<<< Updated upstream
-    mud.send_message(user, "Exits are: %s" % ", ".join(rm.exits))
-=======
     mud.send_message(user, "Exits are: %s" % ", ".join(rm.exits.keys()))
->>>>>>> Stashed changes
 
 def mute_command(mud,user,command,params):
     """
@@ -580,7 +558,6 @@ def unknown_command(mud,user,command,params):
         mud.send_message(user, "Unknown command '%s'" % command)
         mud.send_message(user, "Ensure to use lowercase commands.")
 
-<<<<<<< Updated upstream
 def who_command(mud,user,command,params):
 	"""
 	Displays all the players in the game and which room they are located.
@@ -588,8 +565,6 @@ def who_command(mud,user,command,params):
 	for pid,pl in players.items():
 		mud.send_message(user,"%s is currently located: %s" % (players[pid].name,players[pid].room.name))
 
-=======
->>>>>>> Stashed changes
 def whisper_command(mud,user,command,params):
     """
     Function that handles the whisper command. Allows the player to private
