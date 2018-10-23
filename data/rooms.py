@@ -8,9 +8,9 @@ class Rooms(object):
     def enter_room(self,choice):
         # returns a room object using the roomExits dictionary
 
-        return roomExits[choice]
+        return self.exits[choice]()
 
-class PhoenixTavern(object):
+class ErosMain(Rooms):
     """ Room class object that initializes with a name, long longDescription,
     description, and a list of items that are class objects found int items.py.
     The exits attribute holds a string to send to the user for available
@@ -18,15 +18,15 @@ class PhoenixTavern(object):
     """
 
     def __init__(self):
-        super(PhoenixTavern,self).__init__()
-        self.name = "Phoenix Tavern"
+        super(ErosMain,self).__init__()
+        self.name = "Eros Main Hall"
         self.longDescription = ("You're in a dusty tavern in Phoenix, Az. "
             "There are a few patrons but no one seems to notice you.")
         self.description = "You are in the Phoenix Tavern."
         self.items = items.random_items()
-        self.exits = ["Phoenix Train Station"]
+        self.exits = {"north": ErosTower}
 
-class PhoenixTrainStation(object):
+class ErosTower(Rooms):
     """ Room class object that initializes with a name, long longDescription,
     description, and a list of items that are class objects found int items.py.
     The exits attribute holds a string to send to the user for available
@@ -34,18 +34,20 @@ class PhoenixTrainStation(object):
     """
 
     def __init__(self):
-        super(PhoenixTrainStation,self).__init__()
+        super(ErosTower,self).__init__()
         self.name = "Phoenix Train Station"
         self.longDescription = ("The Phoenix train station. From here you can "
             "travel to Flagstaff, Kingman, Tucson, or Yuma.")
         self.description = "This is the Phoenix Train Station."
         self.items = items.random_items()
-        self.exits = ["Phoenix Tavern"]
+        self.exits = {"south": ErosMain}
 
 # used in gamefunctions for matching the enter command parameter with an
 # available room. The paramater matches the key and then the object is
 # instantiated and set as the character's room attribute.
+"""
 roomExits = {
     "Phoenix Tavern": PhoenixTavern(),
     "Phoenix Train Station": PhoenixTrainStation()
 }
+"""
