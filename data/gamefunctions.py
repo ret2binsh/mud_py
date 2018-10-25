@@ -136,8 +136,10 @@ def process_commands(mud):
             "w": whisper_command,
 			"who": who_command,
 			"wh": who_command,
+            "unequip": unequip_command,
+            "un": unequip_command,
             "unmute": unmute_command,
-            "un": unmute_command,
+            "u": unmute_command,
             }
 
         # if for any reason the player isn't in the player map, skip them and
@@ -261,30 +263,29 @@ def enter_command(mud,user,command,params):
 
 def equip_command(mud,user,command,params):
     """
-    Function that handles equiping items. Will check the items attributes
-    to determine whether it can be equipped and if it is a weapon or armor.
+    Function that handles equiping items. Utilizes the character class method
+    that checks if item exists in the inventory, equips item, removes from
+    inventory, and then sends a message to the player based on if the item
+    was able to be equipped.
     """
 
-    for item in players[user].inventory:
-        # iterate through the inventory and then check if the typed item
-        # matches prior to determining if it can be equipped.
-        if item.name == params:
-
-            if item.equip:
-                # equip the item and then send the player a message
-                players[user].equip(item)
-                mud.send_message(user, "Equipped " + item.name)
-                break
-            else:
-                # if the item is not equippable inform the player
-                mud.send_message(user, "Cannot equip " + item.name)
-                break
-
+    if players[user].equip(params):   #the equip method returns a boolean
+        mud.send_message(user, "Equipped " + params)
     else:
-        # inform the player if the item typed in isn't in the inventory
-        mud.send_message(user, "There's no " + params + " to equip.")
+        mud.send_message(user, "Cannot equip " + params)
 
+def unequip_command(mud,user,command,params):
+    """
+    Function that handles the unequip command. Utilizes the character class
+    method to remove the item, restore the default attributes/equip, and places
+    the item back into the inventory. Method returns a boolean to decide which
+    message to send the user.
+    """
 
+    if players[user].unequip(params):   #returns a boolean based on success
+        mud.send_message(user, "Unequipped " + params)
+    else:
+        mud.send_message(user, params + " is not equipped.")
 
 def help_command(mud,user,command,params):
     """
@@ -293,15 +294,17 @@ def help_command(mud,user,command,params):
 
     # send the player back the list of possible commands
     mud.send_message(user,"Commands:")
-    mud.send_message(user,"  [e]nter <object>     - Moves through the exit specified, e.g. 'enter outside'")
+    mud.send_message(user,"  [e]nter <object>     - Moves through the exit specified, e.g. 'enter north'")
+    mud.send_message(user,"  [un]/[eq]uip <item>  - Equips/Unequips an item, e.g. 'equip Dagger or unequip Dagger'")
     mud.send_message(user,"  [i]nteract <item>    - Further examines an item or player, e.g 'i [item]/[name]'")
     mud.send_message(user,"  [in]ventory          - Lists all of the items in your inventory, e.g. 'inventory'")
     mud.send_message(user,"  [l]ook               - Examines the surroundings, e.g. 'look'")
-    mud.send_message(user,"  [un]/[m]ute <player> - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
+    mud.send_message(user,"  [u]n/[m]ute <player> - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
     mud.send_message(user,"  [p]ickup <item>      - Pickups an item, e.g. 'pickup Dagger.'")
     mud.send_message(user,"  [q]uit               - Closes the session to the MUD server.")
     mud.send_message(user,"  [s]ay <message>      - Says something out loud, e.g. 'say Hello'")
     mud.send_message(user,"  [sh]out <message>    - Shout something to all rooms, e.g. 'shout Hello!'")
+    mud.send_message(user,"  [st]atus             - Displays a printout of the overall status and equipment of the user.")
     mud.send_message(user,"  [w]hisper            - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
     mud.send_message(user,"  [wh]o                - Displays who and where each player are, e.g. 'player1 is in the Phoenix Tavern'")
 
