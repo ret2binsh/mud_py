@@ -1,4 +1,5 @@
 import rooms
+import copy
 
 color = {
     "black": u"\u001b[30;1m",
@@ -33,7 +34,7 @@ class Naked(object):
 
     def __init__(self):
 
-        self.name = "Naked"
+        self.name = "Bday Suit"
         self.description = "absolutely nothing"
         self.defense = 0
 
@@ -66,17 +67,132 @@ class Character(object):
         return ("%s is a lvl %d %s with %d health.") % (self.name,self.level,
                                                         self.type,self.health)
 
-    def equip(self,item):
+    def equip(self,choice):
         # equips either a weapon or armor and updates the power/def
-        if item.equip == "weapon":
-            # adds the weapon object to the characters equipped_weapon attrib
-            self.equipped_weapon = item
-            self.power = self.base_power + self.equipped_weapon.power
+        # also removes the item from inventory and return a boolean to
+        # determine which message to send
 
-        elif item.equip == "armor":
-            # adds the armor object to the characters equipped_armor attrib
-            self.equipped_armor = item
+        for item in self.inventory:
+
+            if item.name == choice and item.equip == "armor":
+
+                # if already equipped send the default message that the item
+                # has been equipped but don't do anything. change this in the
+                # future to say a different message.
+                if self.equipped_armor.name == choice:
+                    return True
+
+                # swaps item back into inventory if it isn't the default armor
+                # if equipped item exists in inventory then +1 the quantity
+                if self.equipped_armor.name != "Bday Suit":
+                    for old in self.inventory:
+                        if old.name == self.equipped_armor.name:
+                            old.quantity = old.quantity + 1
+                            break
+
+                    else:
+                        self.inventory.append(self.equipped_armor)
+
+                # if the item to be equipped has a quantity greater than 1
+                # then copy the object into the equipped slot, set it's
+                # quantity to 1 and decrement the inventory by 1
+                if item.quantity > 1:
+                    self.equipped_armor = copy.deepcopy(item)
+                    self.equipped_armor.quantity = 1
+                    item.quantity = item.quantity - 1
+                    self.defense = self.base_defense + self.equipped_armor.defense
+                    return True
+
+                # if the item isn't currently equipped and it's quantity is 1
+                # then set the equipped slot to the item and remove it from the
+                # inventory
+                self.equipped_armor = item
+                self.defense = self.base_defense + self.equipped_armor.defense
+                self.inventory.remove(item)
+                return True
+
+            elif item.name == choice and item.equip == "weapon":
+                # if already equipped send the default message that the item
+                # has been equipped but don't do anything. change this in the
+                # future to say a different message.
+                if self.equipped_weapon.name == choice:
+                    return True
+
+                # swaps item back into inventory if it isn't the default weapon
+                # if equipped item exists in inventory then +1 the quantity
+                if self.equipped_weapon.name != "Fists":
+                    for old in self.inventory:
+                        if old.name == self.equipped_weapon.name:
+                            old.quantity = old.quantity + 1
+                            break
+
+                    else:
+                        self.inventory.append(self.equipped_weapon)
+
+                # if the item to be equipped has a quantity greater than 1
+                # then copy the object into the equipped slot, set it's
+                # quantity to 1 and decrement the inventory by 1
+                if item.quantity > 1:
+                    self.equipped_weapon = copy.deepcopy(item)
+                    self.equipped_weapon.quantity = 1
+                    item.quantity = item.quantity - 1
+                    self.power = self.base_power + self.equipped_weapon.power
+                    return True
+
+                # if the item isn't currently equipped and it's quantity is 1
+                # then set the equipped slot to the item and remove it from the
+                # inventory
+                self.equipped_weapon = item
+                self.power = self.base_power + self.equipped_weapon.power
+                self.inventory.remove(item)
+                return True
+
+        return False
+
+    def  unequip(self,choice):
+        # unequips item, equips default gear, resets defense/power, places item
+        # back in inventory and returns boolean to decide which message to send
+        # the user
+
+        # used to shorten the variables
+        armorName = self.equipped_armor.name
+        weaponName = self.equipped_weapon.name
+
+        # determine the armor is equipped and not the default 'armor'
+        if choice == armorName and armorName != "Bday Suit":
+            # increment item in inventory if multiples exist
+            for item in self.inventory:
+                if item.name == choice:
+                    item.quantity = item.quantity + 1
+                    break   # break for loop so item isn't appended
+            else:
+                self.inventory.append(self.equipped_armor)
+
+            # equip default 'armor' and recalculate defense
+            self.equipped_armor = Naked()
             self.defense = self.base_defense + self.equipped_armor.defense
+            return True
+
+        # determine the weapon is equipped and not the default weapon
+        elif choice == weaponName and weaponName != "Fists":
+            # increment item in inventory if multiples exist
+            for item in self.inventory:
+                if item.name == choice:
+                    item.quantity = item.quantity + 1
+                    break   # break for loop so item isn't appended
+            else:
+                self.inventory.append(self.equipped_weapon)
+
+            # equip default weapon and recalculate power
+            self.equipped_weapon = Fists()
+            self.power = self.base_power + self.equipped_weapon.power
+            return True
+
+        else:
+            # if not a valid option or default equip: return False
+            # to send the failed to unequip message
+            return False
+
 
     def get_items(self):
         # Iterate through the characters items and display them to the console.
@@ -91,7 +207,7 @@ class Character(object):
             for item in self.inventory:
                 # append each dictionary key which is a string of the item
                 inventoryList.append(("%s[%d]") % (item.displayName,item.quantity))
-            # return a string of the items list separated by a comma and a space
+            inventoryList.sort() # sort the inventory alphabetically
             return inventoryList
 
     def get_status(self):
