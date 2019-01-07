@@ -133,9 +133,9 @@ def process_commands(mud):
             "status": status_command,
             "st": status_command,
             "whisper": whisper_command,
-            "w": whisper_command,
+            "wh": whisper_command,
 			"who": who_command,
-			"wh": who_command,
+			"w": who_command,
             "unequip": unequip_command,
             "un": unequip_command,
             "unmute": unmute_command,
@@ -294,19 +294,32 @@ def help_command(mud,user,command,params):
 
     # send the player back the list of possible commands
     mud.send_message(user,"Commands:")
-    mud.send_message(user,"  [e]nter <object>     - Moves through the exit specified, e.g. 'enter north'")
-    mud.send_message(user,"  [un]/[eq]uip <item>  - Equips/Unequips an item, e.g. 'equip Dagger or unequip Dagger'")
-    mud.send_message(user,"  [i]nteract <item>    - Further examines an item or player, e.g 'i [item]/[name]'")
-    mud.send_message(user,"  [in]ventory          - Lists all of the items in your inventory, e.g. 'inventory'")
-    mud.send_message(user,"  [l]ook               - Examines the surroundings, e.g. 'look'")
-    mud.send_message(user,"  [u]n/[m]ute <player> - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
-    mud.send_message(user,"  [p]ickup <item>      - Pickups an item, e.g. 'pickup Dagger.'")
-    mud.send_message(user,"  [q]uit               - Closes the session to the MUD server.")
-    mud.send_message(user,"  [s]ay <message>      - Says something out loud, e.g. 'say Hello'")
-    mud.send_message(user,"  [sh]out <message>    - Shout something to all rooms, e.g. 'shout Hello!'")
-    mud.send_message(user,"  [st]atus             - Displays a printout of the overall status and equipment of the user.")
-    mud.send_message(user,"  [w]hisper            - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
-    mud.send_message(user,"  [wh]o                - Displays who and where each player are, e.g. 'player1 is in the Phoenix Tavern'")
+    mud.send_message(user,"  {}e{}nter <object>".format(color["red"],color["reset"]) +
+        "       - Moves through the exit specified, e.g. 'enter north'")
+    mud.send_message(user,"  {}un{}/{}eq{}uip <item>".format(color["red"],color["reset"],color["red"],color["reset"]) +
+        "      - Equips/Unequips an item, e.g. 'equip Dagger or unequip Dagger'")
+    mud.send_message(user,"  {}i{}nteract <item>".format(color["red"],color["reset"]) +
+        "      - Further examines an item or player, e.g 'i [item]/[name]'")
+    mud.send_message(user,"  {}in{}ventory".format(color["red"],color["reset"]) +
+        "            - Lists all of the items in your inventory, e.g. 'inventory'")
+    mud.send_message(user,"  {}l{}ook".format(color["red"],color["reset"]) +
+        "                 - Examines the surroundings, e.g. 'look'")
+    mud.send_message(user,"  {}u{}n/{}m{}ute <player>".format(color["red"],color["reset"],color["red"],color["reset"]) +
+        "     - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
+    mud.send_message(user,"  {}p{}ickup <item>".format(color["red"],color["reset"]) +
+        "        - Pickups an item, e.g. 'pickup Dagger.'")
+    mud.send_message(user,"  {}q{}uit".format(color["red"],color["reset"]) +
+        "                 - Closes the session to the MUD server.")
+    mud.send_message(user,"  {}s{}ay <message>".format(color["red"],color["reset"]) +
+        "        - Says something out loud, e.g. 'say Hello'")
+    mud.send_message(user,"  {}sh{}out <message>".format(color["red"],color["reset"]) +
+        "      - Shout something to all rooms, e.g. 'shout Hello!'")
+    mud.send_message(user,"  {}st{}atus".format(color["red"],color["reset"]) +
+        "               - Displays a printout of the overall status and equipment of the user.")
+    mud.send_message(user,"  {}wh{}isper".format(color["red"],color["reset"]) +
+        "              - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
+    mud.send_message(user,"  {}w{}ho".format(color["red"],color["reset"]) +
+        "                  - Displays who and where each player are, e.g. 'player1 is in the Phoenix Tavern'")
 
 def interact_command(mud,user,command,params):
     """

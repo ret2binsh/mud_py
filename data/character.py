@@ -100,14 +100,14 @@ class Character(object):
                     self.equipped_armor = copy.deepcopy(item)
                     self.equipped_armor.quantity = 1
                     item.quantity = item.quantity - 1
-                    self.defense = self.base_defense + self.equipped_armor.defense
+                    self.defense = self.base_defense * self.equipped_armor.defense
                     return True
 
                 # if the item isn't currently equipped and it's quantity is 1
                 # then set the equipped slot to the item and remove it from the
                 # inventory
                 self.equipped_armor = item
-                self.defense = self.base_defense + self.equipped_armor.defense
+                self.defense = self.base_defense * self.equipped_armor.defense
                 self.inventory.remove(item)
                 return True
 
@@ -136,14 +136,14 @@ class Character(object):
                     self.equipped_weapon = copy.deepcopy(item)
                     self.equipped_weapon.quantity = 1
                     item.quantity = item.quantity - 1
-                    self.power = self.base_power + self.equipped_weapon.power
+                    self.power = self.base_power * self.equipped_weapon.power
                     return True
 
                 # if the item isn't currently equipped and it's quantity is 1
                 # then set the equipped slot to the item and remove it from the
                 # inventory
                 self.equipped_weapon = item
-                self.power = self.base_power + self.equipped_weapon.power
+                self.power = self.base_power * self.equipped_weapon.power
                 self.inventory.remove(item)
                 return True
 
@@ -170,7 +170,7 @@ class Character(object):
 
             # equip default 'armor' and recalculate defense
             self.equipped_armor = Naked()
-            self.defense = self.base_defense + self.equipped_armor.defense
+            self.defense = self.base_defense * self.equipped_armor.defense
             return True
 
         # determine the weapon is equipped and not the default weapon
@@ -185,7 +185,7 @@ class Character(object):
 
             # equip default weapon and recalculate power
             self.equipped_weapon = Fists()
-            self.power = self.base_power + self.equipped_weapon.power
+            self.power = self.base_power * self.equipped_weapon.power
             return True
 
         else:
@@ -249,12 +249,12 @@ class Warrior(Character):
         # Generate Warrior specific attributes
         super(Warrior,self).__init__()
         self.type = "Warrior"
-        self.base_power = 5
-        self.power = self.base_power + self.equipped_weapon.power
+        self.base_power = 1
+        self.power = self.base_power * self.equipped_weapon.power
         self.health = 100
         self.max_health = 100
         self.base_defense = .9
-        self.defense = self.base_defense + self.equipped_armor.defense
+        self.defense = self.base_defense * self.equipped_armor.defense
         self.evade_chance = 20
         self.magic = 1
         self.critical = 1.2
