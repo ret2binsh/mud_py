@@ -38,7 +38,7 @@ def login_check(mud,user,command):
         mud.send_message(user, "Sorry, you provided an incorrect password.")
     else:
         players[user].authenticated = mud.authentication_status(user,True)
-        mud.send_message(user, "Welcome!")
+        mud.send_message(user, "Authorization code accepted!")
         mud.send_message(user, "What is your name?")
 
 def new_players_check(mud):
@@ -202,6 +202,7 @@ def create_player(mud,user,command,params):
         # Display duplicate name message and reset duplicateName variable
         mud.send_message(user, "Sorry that name is already used.")
         duplicateName = False
+        mud.send_message(user, "Please select another name.")
 
     else:
         # Name the new player
@@ -213,7 +214,10 @@ def create_player(mud,user,command,params):
             mud.send_message(pid,"%s entered the game" % players[user].name)
 
         # send the new player a welcome message
-        mud.send_message(user,"Welcome to the game, %s. Type '[h]elp' for a list of commands. Have fun!" % players[user].name)
+        mud.send_message(user,"\033[2J")
+        mud.send_message(user,"\033[H")
+        mud.send_message(user,"Ready Player One.")
+        mud.send_message(user,"Type '[h]elp' for a list of commands.")
 
         # send the new player the description of their current room
         mud.send_message(user,players[user].room.longDescription)
@@ -292,34 +296,52 @@ def help_command(mud,user,command,params):
     Provide the available commands within the help menu...
     """
 
-    # send the player back the list of possible commands
-    mud.send_message(user,"Commands:")
-    mud.send_message(user,"  {}e{}nter <object>".format(color["red"],color["reset"]) +
-        "       - Moves through the exit specified, e.g. 'enter north'")
-    mud.send_message(user,"  {}un{}/{}eq{}uip <item>".format(color["red"],color["reset"],color["red"],color["reset"]) +
-        "      - Equips/Unequips an item, e.g. 'equip Dagger or unequip Dagger'")
-    mud.send_message(user,"  {}i{}nteract <item>".format(color["red"],color["reset"]) +
-        "      - Further examines an item or player, e.g 'i [item]/[name]'")
-    mud.send_message(user,"  {}in{}ventory".format(color["red"],color["reset"]) +
-        "            - Lists all of the items in your inventory, e.g. 'inventory'")
-    mud.send_message(user,"  {}l{}ook".format(color["red"],color["reset"]) +
-        "                 - Examines the surroundings, e.g. 'look'")
-    mud.send_message(user,"  {}u{}n/{}m{}ute <player>".format(color["red"],color["reset"],color["red"],color["reset"]) +
-        "     - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
-    mud.send_message(user,"  {}p{}ickup <item>".format(color["red"],color["reset"]) +
-        "        - Pickups an item, e.g. 'pickup Dagger.'")
-    mud.send_message(user,"  {}q{}uit".format(color["red"],color["reset"]) +
-        "                 - Closes the session to the MUD server.")
-    mud.send_message(user,"  {}s{}ay <message>".format(color["red"],color["reset"]) +
-        "        - Says something out loud, e.g. 'say Hello'")
-    mud.send_message(user,"  {}sh{}out <message>".format(color["red"],color["reset"]) +
-        "      - Shout something to all rooms, e.g. 'shout Hello!'")
-    mud.send_message(user,"  {}st{}atus".format(color["red"],color["reset"]) +
-        "               - Displays a printout of the overall status and equipment of the user.")
-    mud.send_message(user,"  {}wh{}isper".format(color["red"],color["reset"]) +
-        "              - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
-    mud.send_message(user,"  {}w{}ho".format(color["red"],color["reset"]) +
-        "                  - Displays who and where each player are, e.g. 'player1 is in the Phoenix Tavern'")
+    if params.lower() == "full":
+        # send the player back the list of possible commands
+        mud.send_message(user,"Full Help Menu:")
+        mud.send_message(user,"  {}e{}nter <object>".format(color["red"],color["reset"]) +
+            "       - Moves through the exit specified, e.g. 'enter north'")
+        mud.send_message(user,"  {}un{}/{}eq{}uip <item>".format(color["red"],color["reset"],color["red"],color["reset"]) +
+            "      - Equips/Unequips an item, e.g. 'equip Dagger or unequip Dagger'")
+        mud.send_message(user,"  {}i{}nteract <item>".format(color["red"],color["reset"]) +
+            "      - Further examines an item or player, e.g 'i [item]/[name]'")
+        mud.send_message(user,"  {}in{}ventory".format(color["red"],color["reset"]) +
+            "            - Lists all of the items in your inventory, e.g. 'inventory'")
+        mud.send_message(user,"  {}l{}ook".format(color["red"],color["reset"]) +
+            "                 - Examines the surroundings, e.g. 'look'")
+        mud.send_message(user,"  {}u{}n/{}m{}ute <player>".format(color["red"],color["reset"],color["red"],color["reset"]) +
+            "     - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
+        mud.send_message(user,"  {}p{}ickup <item>".format(color["red"],color["reset"]) +
+            "        - Pickups an item, e.g. 'pickup Dagger.'")
+        mud.send_message(user,"  {}q{}uit".format(color["red"],color["reset"]) +
+            "                 - Closes the session to the MUD server.")
+        mud.send_message(user,"  {}s{}ay <message>".format(color["red"],color["reset"]) +
+            "        - Says something out loud, e.g. 'say Hello'")
+        mud.send_message(user,"  {}sh{}out <message>".format(color["red"],color["reset"]) +
+            "      - Shout something to all rooms, e.g. 'shout Hello!'")
+        mud.send_message(user,"  {}st{}atus".format(color["red"],color["reset"]) +
+            "               - Displays a printout of the overall status and equipment of the user.")
+        mud.send_message(user,"  {}wh{}isper".format(color["red"],color["reset"]) +
+            "              - Whisper a message to a single player, e.g. 'whisper john, Hello.'")
+        mud.send_message(user,"  {}w{}ho".format(color["red"],color["reset"]) +
+            "                  - Displays who and where each player are, e.g. 'player1 is in the Phoenix Tavern'")
+
+    else:
+        #Partial help Menu
+        mud.send_message(user,"Short Help Menu:")
+        mud.send_message(user,"  {}e{}nter <object>".format(color["red"],color["reset"]) +
+            "       - Moves through the exit specified, e.g. 'enter north'")
+        mud.send_message(user,"  {}i{}nteract <item>".format(color["red"],color["reset"]) +
+            "      - Further examines an item or player, e.g 'i [item]/[name]'")
+        mud.send_message(user,"  {}l{}ook".format(color["red"],color["reset"]) +
+            "                 - Examines the surroundings, e.g. 'look'")
+        mud.send_message(user,"  {}q{}uit".format(color["red"],color["reset"]) +
+            "                 - Closes the session to the MUD server.")
+        mud.send_message(user,"  {}st{}atus".format(color["red"],color["reset"]) +
+            "               - Displays a printout of the overall status and equipment of the user.")
+        mud.send_message(user,"  {}h{}elp full".format(color["red"],color["reset"]) +
+            "            - Displays the full help menu.")
+
 
 def interact_command(mud,user,command,params):
     """

@@ -50,7 +50,7 @@ class Character(object):
 
         self.name = "unknown"
         self.menu_level = 0
-        self.room = rooms.ErosMain()
+        self.room = rooms.OasisLobby()
         self.authenticated = False
         self.muted_players = []
         self.afk_status = False

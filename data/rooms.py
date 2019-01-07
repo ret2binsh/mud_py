@@ -10,7 +10,7 @@ class Rooms(object):
 
         return self.exits[choice]()
 
-class ErosMain(Rooms):
+class OasisLobby(Rooms):
     """ Room class object that initializes with a name, long longDescription,
     description, and a list of items that are class objects found int items.py.
     The exits attribute holds a string to send to the user for available
@@ -18,15 +18,16 @@ class ErosMain(Rooms):
     """
 
     def __init__(self):
-        super(ErosMain,self).__init__()
-        self.name = "Eros Main Hall"
-        self.longDescription = ("You're in a dusty tavern in Phoenix, Az. "
-            "There are a few patrons but no one seems to notice you.")
-        self.description = "You are in the Phoenix Tavern."
+        super(OasisLobby,self).__init__()
+        self.name = "Oasis Main Lobby"
+        self.longDescription = ("Welcome to the Oasis. Here is where you start "
+            "your journey. There are a few NPCs standing around but no one "
+            "apears to want to interact with you.")
+        self.description = "The Oasis Main Lobby."
         self.items = items.random_items()
-        self.exits = {"north": ErosTower}
+        self.exits = {"north": OasisTransport}
 
-class ErosTower(Rooms):
+class OasisTransport(Rooms):
     """ Room class object that initializes with a name, long longDescription,
     description, and a list of items that are class objects found int items.py.
     The exits attribute holds a string to send to the user for available
@@ -34,20 +35,11 @@ class ErosTower(Rooms):
     """
 
     def __init__(self):
-        super(ErosTower,self).__init__()
-        self.name = "Phoenix Train Station"
-        self.longDescription = ("The Phoenix train station. From here you can "
-            "travel to Flagstaff, Kingman, Tucson, or Yuma.")
-        self.description = "This is the Phoenix Train Station."
+        super(OasisTransport,self).__init__()
+        self.name = "Oasis Transport"
+        self.longDescription = ("The Oasis Transport. From here you can travel "
+            "to any of the 27 sectors of the Oasis. But be warned, some areas "
+            "require credits and others are dangerous for low-level players.")
+        self.description = "The Oasis Tranport Station."
         self.items = items.random_items()
-        self.exits = {"south": ErosMain}
-
-# used in gamefunctions for matching the enter command parameter with an
-# available room. The paramater matches the key and then the object is
-# instantiated and set as the character's room attribute.
-"""
-roomExits = {
-    "Phoenix Tavern": PhoenixTavern(),
-    "Phoenix Train Station": PhoenixTrainStation()
-}
-"""
+        self.exits = {"south": OasisLobby}
