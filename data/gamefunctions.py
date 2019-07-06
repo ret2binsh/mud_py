@@ -180,6 +180,7 @@ def create_player(mud,user,command,params):
     """
     # used to ensure a duplicate name is not chosen.
     duplicateName = False
+    invalidName = False
     name_list = [command]
     if params:
         name_list.append(params)
@@ -193,10 +194,14 @@ def create_player(mud,user,command,params):
 
             duplicateName = True
 
+        elif name_string == "":
+
+            invalidName = True
+        
         else:
             # check next player for duplicate name
             continue
-    # Determine if duplicate name is true and tell the user to try again or
+    # Determine if duplicate or invalid name and tell the user to try again or
     # set the player's name and provide welcome info
     if duplicateName == True:
         # Display duplicate name message and reset duplicateName variable
@@ -204,6 +209,11 @@ def create_player(mud,user,command,params):
         duplicateName = False
         mud.send_message(user, "Please select another name.")
 
+    elif invalidName == True:
+        mud.send_message(user, "Sorry that name is not valid.")
+        invalidName = False
+        mud.send_message(user, "Please select another name.")
+    
     else:
         # Name the new player
         players[user].name = name_string
@@ -239,26 +249,35 @@ def enter_command(mud,user,command,params):
     # if the specified exit is found in the room's exits list
     if ex in rm.exits.keys():
 
-        # go through all the players in the game
-        for pid,pl in players.items():
-            # if player is in the same room and isn't the player sending the command
-            if players[pid].room.name == players[user].room.name and pid!=user:
-                # send them a message telling them that the player left the room
-                mud.send_message(pid,"%s left via exit '%s'" % (players[user].name,ex))
+        if players[user].credits >= rm.get_credits(ex):
 
-        # update the player's current room to the one the exit leads to
-        players[user].room = rm.enter_room(ex)
+            # go through all the players in the game
+            for pid,pl in players.items():
+                # if player is in the same room and isn't the player sending the command
+                if players[pid].room.name == players[user].room.name and pid!=user:
+                    # send them a message telling them that the player left the room
+                    mud.send_message(pid,"%s left via exit '%s'" % (players[user].name,ex))
+         
+            # update the player's current room to the one the exit leads to and subtract credits
+            players[user].room = rm.enter_room(ex)
+            players[user].credits = players[user].credits - rm.get_credits(ex)
+         
+            # go through all the players in the game
+            for pid,pl in players.items():
+                # if player is in the same (new) room and isn't the player sending the command
+                if players[pid].room.name == players[user].room.name and pid!=user:
+                    # send them a message telling them that the player entered the room
+                    mud.send_message(pid,"%s arrived via exit '%s'" % (players[user].name,ex))
+         
+            # send the player a message telling them where they are now
+            mud.send_message(user,"You arrive at '%s'" % players[user].room.name)
+            mud.send_message(user,players[user].room.longDescription)
 
-        # go through all the players in the game
-        for pid,pl in players.items():
-            # if player is in the same (new) room and isn't the player sending the command
-            if players[pid].room.name == players[user].room.name and pid!=user:
-                # send them a message telling them that the player entered the room
-                mud.send_message(pid,"%s arrived via exit '%s'" % (players[user].name,ex))
-
-        # send the player a message telling them where they are now
-        mud.send_message(user,"You arrive at '%s'" % players[user].room.name)
-        mud.send_message(user,players[user].room.longDescription)
+        else:
+            #inform the player they don't have the required credits
+            mud.send_message(user,"You do not have the required amount of credits to enter")
+            mud.send_message(user,"Your credits: %d" % players[user].credits)
+            mud.send_message(user,"%s's credit requirement: %d" % (ex, rm.get_credits(ex)))
 
     # the specified exit wasn't found in the current room
     else:

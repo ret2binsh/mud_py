@@ -10,6 +10,11 @@ class Rooms(object):
 
         return self.exits[choice]()
 
+    def get_credits(self,choice):
+        # returns the credit value of the selected room.
+
+        return self.exits[choice]().credits
+
 class OasisLobby(Rooms):
     """ Room class object that initializes with a name, long longDescription,
     description, and a list of items that are class objects found int items.py.
@@ -20,8 +25,9 @@ class OasisLobby(Rooms):
     def __init__(self):
         super(OasisLobby,self).__init__()
         self.name = "Oasis Main Lobby"
+        self.credits = 10
         self.longDescription = ("Welcome to the Oasis. Here is where you start "
-            "your journey. There are a few NPCs standing around but no one "
+            "your journey.\nThere are a few NPCs standing around but no one "
             "apears to want to interact with you.")
         self.description = "The Oasis Main Lobby."
         self.items = items.random_items()
@@ -37,8 +43,9 @@ class OasisTransport(Rooms):
     def __init__(self):
         super(OasisTransport,self).__init__()
         self.name = "Oasis Transport"
+        self.credits = 0
         self.longDescription = ("The Oasis Transport. From here you can travel "
-            "to any of the 27 sectors of the Oasis. But be warned, some areas "
+            "to any of the 27 sectors of the Oasis.\nBut be warned, some areas "
             "require credits and others are dangerous for low-level players.")
         self.description = "The Oasis Tranport Station."
         self.items = items.random_items()

@@ -113,7 +113,7 @@ def random_items():
     itemsList = []  #list of items to be returned
     # random choice number of items. weighted towards 1 item
     for i in range(0,random.choice([1,1,1,2,3])):
-        type = random.choice(tier1Items)
-        itemsList.append(random.choice(type))
+        itemType = random.choice(tier1Items)
+        itemsList.append(random.choice(itemType))
 
     return itemsList

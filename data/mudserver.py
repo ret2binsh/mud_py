@@ -12,6 +12,7 @@ mud_py fork author: Joshua Gonzales
 import socket
 import select
 import time
+import datetime
 import sys
 
 
@@ -45,6 +46,11 @@ class MudServer(object):
             self.lastcheck = lastcheck
             self.lastactive = lastactive
             self.authenticated = authenticated
+            self.logintime = datetime.datetime.fromtimestamp(lastactive).strftime('%c')
+
+            #Log each connection on initialization
+            with open('logs/connections.log','a+') as f:
+                f.write("New connection from %s on %s\n" % (self.address,self.logintime))
 
 
     # Used to store different types of occurences

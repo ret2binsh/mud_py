@@ -54,7 +54,7 @@ class Character(object):
         self.authenticated = False
         self.muted_players = []
         self.afk_status = False
-        self.gold = 0
+        self.credits = 0
         self.level = 1
         self.exp = 0
         self.inventory = []
@@ -221,9 +221,9 @@ class Character(object):
         # multipled spaces and subtracted them by the dynamic length of the left-side Variables
         # this ensures everything stays nicely formatted. Returns a list of strings
         status_screen = ["********************************************************************************",
-                         " Name  :  {0}{1}{2}".format(color["yellow"],self.name,color["reset"]),
-                         " Gold  :  {0}{1}{2}".format(color["yellow"],self.gold,color["reset"]),
-                         " Level :  {0}{1}{2}    Class :  {3}{4}{5}     Current Room :  {6}{7}{8}".format(color["yellow"],
+                         " Name    :  {0}{1}{2}".format(color["yellow"],self.name,color["reset"]),
+                         " Credits :  {0}{1}{2}".format(color["yellow"],self.credits,color["reset"]),
+                         " Level   :  {0}{1}{2}    Class :  {3}{4}{5}     Current Room :  {6}{7}{8}".format(color["yellow"],
                             self.level,color["reset"],color["yellow"],self.type,color["reset"],color["yellow"],self.room.name,color["reset"]),
                          "********************************************************************************",
                          (" Health     :  {0}{1}{2}/{3}{4}{5}" + " "*(37-a) + "Weapon:  {6}{7}{8}").format(color["red"],
