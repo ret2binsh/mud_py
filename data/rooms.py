@@ -25,7 +25,7 @@ class OasisLobby(Rooms):
     def __init__(self):
         super(OasisLobby,self).__init__()
         self.name = "Oasis Main Lobby"
-        self.credits = 10
+        self.credits = 0
         self.longDescription = ("Welcome to the Oasis. Here is where you start "
             "your journey.\nThere are a few NPCs standing around but no one "
             "apears to want to interact with you.")
@@ -49,4 +49,24 @@ class OasisTransport(Rooms):
             "require credits and others are dangerous for low-level players.")
         self.description = "The Oasis Tranport Station."
         self.items = items.random_items()
-        self.exits = {"south": OasisLobby}
+        self.exits = {"south": OasisLobby,
+                      "EnderVerse": EnderVerse}
+
+
+class EnderVerse(Rooms):
+    """ Room class object that initializes with a name, long longDescription,
+    description, and a list of items that are class objects found int items.py.
+    The exits attribute holds a string to send to the user for available
+    neighbor rooms and is used to match against the roomExits dict.
+    """
+
+    def __init__(self):
+        super(EnderVerse,self).__init__()
+        self.name = "EnderVerse Docking Station"
+        self.credits = 0
+        self.longDescription = ("Welcome to the EnderVerse Sector. From here you "
+            "can visit many of the planets found\n within Orson Scott Cards' "
+            "Universe built around the Ender's Series.")
+        self.description = "EnderVerse Docking Station."
+        self.items = items.random_items()
+        self.exits = {"OasisTransport": OasisTransport}
