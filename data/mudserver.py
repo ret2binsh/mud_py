@@ -212,7 +212,7 @@ class MudServer(object):
         # for each client
         for cl in self._clients.values():
             # close the socket, disconnecting the client
-            cl.socket.shutdown()
+            #cl.socket.shutdown()
             cl.socket.close()
         # stop listening for new clients
         self._listen_socket.close()

@@ -1,6 +1,7 @@
 import hashlib
+import random
 
-from character import Warrior
+from character import Human
 from banner import bannerText
 
 # empty list for tracking all players
@@ -11,6 +12,7 @@ color = {
     "black": u"\u001b[30;1m",
     "red": u"\u001b[31;1m",
     "green": u"\u001b[32;1m",
+    "gBlink": u"\u001b[32;1;5m",
     "yellow": u"\u001b[33;1m",
     "blue": u"\u001b[34;1m",
     "magenta": u"\u001b[35;1m",
@@ -53,7 +55,7 @@ def new_players_check(mud):
         # add the new player to the dictionary using the Character class.
         # all default attributes are loaded and stored within the Character
         # object that can be accessed using the id key.
-        players[user] = Warrior()
+        players[user] = Human()
 
         # send the new player the game banner
         for line in bannerText:
@@ -108,6 +110,11 @@ def process_commands(mud):
 
         # List of commands when in normal mode
         command_list = {
+            "attack": attack_command,
+            "a": attack_command,
+            "consume": consume_command,
+            "c": consume_command,
+            "crashthesystem": crash_command,
             "enter": enter_command,
             "e": enter_command,
             "equip": equip_command,
@@ -134,8 +141,8 @@ def process_commands(mud):
             "st": status_command,
             "whisper": whisper_command,
             "wh": whisper_command,
-			"who": who_command,
-			"w": who_command,
+	    "who": who_command,
+	    "w": who_command,
             "unequip": unequip_command,
             "un": unequip_command,
             "unmute": unmute_command,
@@ -173,6 +180,142 @@ def process_commands(mud):
             # since unauthenticated, this allows the user to enter the password
             login_check(mud,user,command)
 
+def attack_command(mud,user,command,params):
+    """
+    Function that handles the interact command. The player can either interact
+    with an item in the room or a character that is in the room. If they
+    interact with a character then the class string will be presented to the
+    player.
+    """
+
+    attack_dialog = ["takes a mighty swing",
+                     "breathes heavily and takes a strike!",
+                     "filled with rage, attempts a desperate attack.",
+                     "weakly attacks",
+                     "with doubt, takes aim and fires off an attack.",
+                     "meekly lunges forth.",
+                     "attacks!",
+                     "with a steady hand, attempts to crush the enemy.",
+                     "growing evermore desperate, chucks their weapon at the enemy."]
+
+    # store the player's current data
+    rm = players[user].room
+    pN = players[user].name
+    pW = players[user].equipped_weapon.name
+    pD = players[user].defense
+
+    # Iterate through NPCs to find a match 
+    for npc in rm.npcs:
+        # if a match, determine if the the npc can be attacked (pk). 
+        if npc.name == params:
+
+           #store npc's data for sending messages to user
+           nN = npc.name
+           nW = npc.equipped_weapon.name
+           nD = npc.defense
+
+           # deteremine if the NPC has the player kill variable set
+           if npc.pk:
+
+              # battle continues until someone's health drops to zero
+              # while players[user].health > 0 and npc.health > 0:
+               for turn in range(3):
+
+                   prompt_info(mud,user)
+                   if players[user].health <=0:
+                       mud.send_message(user,"You need to restore your health prior to entering battle.") 
+                       break         
+
+                   # determine critical hit
+                   if random.random() < players[user].crit_chance / 100.:
+                       cA = players[user].critical * players[user].power
+                       # max is used to ensure values never drop below zero (health or negative damage)
+                       netDamage = max(0,(cA - nD))
+                       npc.health = max(0,(npc.health - netDamage)) 
+                       mud.send_message(user,"%sCritical Attack!!%s" % (color["gBlink"],color["reset"]))
+                       mud.send_message(user,"%s%s attacks %s with %s for %g damage!%s" % (color["blue"],pN,nN,pW,netDamage,color["reset"]))
+                   # non-critical hit
+                   else:
+                       pA =  players[user].power
+                       # max used to ensure non-negative values
+                       netDamage = max(0,(pA - nD))
+                       npc.health = max(0,(npc.health - netDamage))
+                       mud.send_message(user,"%s%s %s%s" % (color["blue"],pN,random.choice(attack_dialog),color["reset"]))
+                       mud.send_message(user,"%s%s attacks %s with %s for %g damage!%s" % (color["blue"],pN,nN,pW,netDamage,color["reset"]))
+                  
+                   # provides an enemy prompt to imitate a back-and-forth battle sequence
+                   enemy_prompt(mud,user,npc)
+ 
+                   # validate if the enemy was defeated on last attack
+                   if npc.health > 0:
+                       if random.random() < npc.crit_chance / 100.:
+                           cA = npc.critical * npc.power
+                           netDamage = max(0,(cA - pD))
+                           players[user].health = max(0,(players[user].health - netDamage))
+                           mud.send_message(user,"%sCritical Attack!%s" % (color["gBlink"],color["reset"]))
+                           mud.send_message(user,"%s%s attacks %s with %s for %g damage!%s" % (color["red"],nN,pN,nW,netDamage,color["reset"]))
+                       else:
+                           nA = npc.power
+                           netDamage = max(0,(nA - pD))
+                           players[user].health = max(0,(players[user].health - netDamage))
+                           mud.send_message(user,"%s%s %s%s" % (color["red"],nN,random.choice(attack_dialog),color["reset"]))
+                           mud.send_message(user,"%s%s attacks %s with %s for %g damage!%s" % (color["red"],nN,pN,nW,netDamage,color["reset"]))
+                   else:
+                       mud.send_message(user,"%s has perished!" % nN)
+                       prompt_info(mud,user)
+                       mud.send_message(user,"%s has gained %d experience!" % (pN,npc.exp))
+                       prompt_info(mud,user)
+                       mud.send_message(user,"%s has acquired %d credit(s)." % (pN,npc.credits))
+                       players[user].exp = players[user].exp + npc.exp
+                       players[user].credits = players[user].credits + npc.credits
+                       rm.npcs.remove(npc)
+                       break
+
+                   if players[user].health <= 0:
+                       mud.send_message(user,"You have died")
+                       players[user].name = players[user].name + "'s Ghost"
+                       break
+           else:
+                mud.send_message(user,"Cannot attack")
+
+def consume_command(mud,user,command,params):
+    """
+    Allows the player to consume food and beverages
+    by iterating through the inventory for a match,
+    healing the player, and then deleting the item
+    from the inventory.
+    """
+
+    # iterate through inventory searching for selected item
+    for item in players[user].inventory:
+        # match only if in inventory and is consumable
+        if params.lower() == item.name.lower() and item.consume:
+            mud.send_message(user,"%s is restored by %dHP by consuming %s" % (players[user].name,item.cure_amount,item.name))
+            players[user].health = players[user].health + item.cure_amount
+            # ensure new health doesn't break the max health amount
+            if players[user].health > players[user].max_health:
+                players[user].health = players[user].max_health
+            # decrement the quantity in the inventory or delete if last item
+            if item.quantity > 1:
+                item.quantity = item.quantity - 1
+            else:
+                players[user].inventory.remove(item)
+
+
+
+def crash_command(mud,user,command,params):
+    """
+    Allows the ServerAdmin to 'gracefully' shutdown
+    the server. Eventually only let certain logins
+    with this capability.
+    """
+
+    for pid,pl in players.items():
+        # send message to everyone
+        mud.send_message(pid,"Server going down for maintainence now!")
+    
+    mud.shutdown() 
+
 def create_player(mud,user,command,params):
     """
     Since the player has yet to be named, this function will allow the player
@@ -190,7 +333,7 @@ def create_player(mud,user,command,params):
     # Iterate through all players to detect duplicate names
     for pid,pl in players.items():
         # Check if entered name is already in use
-        if name_string == players[pid].name:
+        if name_string.lower() == players[pid].name.lower():
 
             duplicateName = True
 
@@ -226,7 +369,7 @@ def create_player(mud,user,command,params):
         # send the new player a welcome message
         mud.send_message(user,"\033[2J")
         mud.send_message(user,"\033[H")
-        mud.send_message(user,"Ready Player One.")
+        mud.send_message(user,"\033[33;7;5mReady Player One.\033[0m")
         mud.send_message(user,"Type '[h]elp' for a list of commands.")
 
         # send the new player the description of their current room
@@ -318,6 +461,8 @@ def help_command(mud,user,command,params):
     if params.lower() == "full":
         # send the player back the list of possible commands
         mud.send_message(user,"Full Help Menu:")
+        mud.send_message(user,"  {}a{}ttack <npc>".format(color["red"],color["reset"]) +
+            "         - Attacks an NPC. Be sure to examine (inspect) prior to avoid an embarrasing defeat.")
         mud.send_message(user,"  {}e{}nter <object>".format(color["red"],color["reset"]) +
             "       - Moves through the exit specified, e.g. 'enter north'")
         mud.send_message(user,"  {}un{}/{}eq{}uip <item>".format(color["red"],color["reset"],color["red"],color["reset"]) +
@@ -380,12 +525,23 @@ def interact_command(mud,user,command,params):
             # Send the description of the item
             mud.send_message(user, item.description)
 
+    # Iterate through NPCs to find a match 
+    for npc in rm.npcs:
+        # if a match, display the NPCs status info to the player
+        if npc.name == params:
+            status_display = npc.get_status()
+            for line in status_display:
+                mud.send_message(user, line)
+
     # Allows the player to get info on other players by interacting with them.
     for pid,pl in players.items():
         # Check through all players
         if players[pid].name == params:
             # Display the default character string
-            mud.send_message(user, str(players[pid]))
+            #mud.send_message(user, str(players[pid]))
+             status_display = players[pid].get_status()
+             for line in status_display:
+                 mud.send_message(user, line)
 
 def inventory_command(mud,user,command,params):
     """
@@ -430,12 +586,19 @@ def look_command(mud,user,command,params):
             roomItems.append(item.displayName)
     else:
         roomItems.append("")
+    
+    roomNPCs = []
+    # iterate through available NPCs
+    if rm.npcs:
+        for npc in rm.npcs:
+            roomNPCs.append(npc.name)
+    else:
+        roomNPCs.append("")
 
     # send player a message containing the list of players in the room
     mud.send_message(user, "Players here: %s" % ", ".join(playersHere))
-
     mud.send_message(user, "Items available: %s" % ", ".join(roomItems))
-
+    mud.send_message(user, "NPCs: %s" % ", ".join(roomNPCs))
     # send player a message containing the list of exits from this room
     mud.send_message(user, "Exits are: %s" % ", ".join(rm.exits.keys()))
 
@@ -468,7 +631,7 @@ def mute_command(mud,user,command,params):
 
         else:
             # Inform user that the player is not currently available to mute
-            mud.send_message(user, "%s is not a valid player." % params)
+            mud.send_message(user, "%s is not a valid player to mute." % params)
 
     else:
         # if the mute command is performed with no parameter then provide
@@ -492,7 +655,7 @@ def pickup_command(mud,user,command,params):
     # Iterate through items within the current room
     for item in rm.items:
         # Determine if the player is interacting with a valid object
-        if item.name == params:
+        if item.name == params and item.pickup_value:
             # Iterate through items in inventory
             for onHand in players[user].inventory:
                 # check if item currently exists in inventory
@@ -501,7 +664,6 @@ def pickup_command(mud,user,command,params):
                     onHand.quantity = onHand.quantity + 1
                     rm.items.remove(item)
                     mud.send_message(user, "%s added to inventory" % item.displayName)
-
                     break
             else:
                 # append new item into the inventory
@@ -509,12 +671,10 @@ def pickup_command(mud,user,command,params):
                 rm.items.remove(item)
                 mud.send_message(user, "%s added to inventory" % item.displayName)
 
-
-    # Allows the player to get info on other players by interacting with them.
+    # Iterate through available players.
     for pid,pl in players.items():
-        # Check through all players
+        # check for match
         if players[pid].name == params:
-            # Display the default character string
             mud.send_message(user, "Hey no picking up on other players.")
 
 def prompt_info(mud,user):
@@ -530,7 +690,23 @@ def prompt_info(mud,user):
     n =  players[user].name
 
     # creates the prompt and colors the username as yellow and current health as red
-    prompt = "%s%s%s[%s%d%s/%d]%s$%s" % (color["yellow"],n,color["reset"],color["red"],h,color["reset"],m,color["yellow"],color["reset"])
+    prompt = "%s%s%s[%s%g%s/%d]%s$%s" % (color["yellow"],n,color["reset"],color["red"],h,color["reset"],m,color["yellow"],color["reset"])
+    mud.send_prompt(user,prompt)
+
+def enemy_prompt(mud,user,enemy):
+    """
+    Function that handles the displaying of the player's prompt. This gathers
+    the pertinent information from the character to build the display and
+    sends it to the mud.send_prompt method:
+    [health/max_health]name$
+    """
+
+    h = enemy.health
+    m = enemy.max_health
+    n = enemy.name
+
+    # creates the prompt and colors the username as yellow and current health as red
+    prompt = "%s%s%s[%s%g%s/%d]%s$%s" % (color["yellow"],n,color["reset"],color["red"],h,color["reset"],m,color["yellow"],color["reset"])
     mud.send_prompt(user,prompt)
 
 def unmute_command(mud,user,command,params):
@@ -650,4 +826,4 @@ def whisper_command(mud,user,command,params):
     # if there was no message attached, inform the user
     except ValueError:
 
-        mud.send_message(user, "Invalid whisper syntax, e.g [w]hisper 'name', message.")
+        mud.send_message(user, "Invalid whisper syntax, e.g [wh]isper 'name', message.")

@@ -33,6 +33,8 @@ class PickUp_Items(object):
 
         self.pickup_value = True
         self.quantity = 1
+        self.equip = False
+        self.consume = False
 
 class Stationary_Items(object):
     """
@@ -45,17 +47,20 @@ class Stationary_Items(object):
         # Creates generic attributes for the Stationary Items
 
         self.pickup_value = False
+        self.quantity = 1
+        self.equip = False
+        self.consume = False
 
 class Drink(PickUp_Items):
 
-    def __init__(self,name,description):
+    def __init__(self,name,description,cure_amount):
     # Initiate Drink item attributes
         super(Drink,self).__init__()
         self.name = name
+        self.cure_amount = cure_amount
         self.displayName = u"%s%s%s" % (color["white"],name,color["reset"])
         self.description = description
         self.consume = True
-        self.equip = False
         self.healthBoost = .2
 
 class Weapon(PickUp_Items):
@@ -66,8 +71,7 @@ class Weapon(PickUp_Items):
         self.name = name
         self.displayName = u"%s%s%s" % (color["red"],name,color["reset"])
         self.description = description
-        self.consume = False
-        self.power = 10 * power
+        self.power = 1.2 * power
         self.equip = "weapon"
 
 class Armor(PickUp_Items):
@@ -78,14 +82,22 @@ class Armor(PickUp_Items):
         self.name = name
         self.displayName = u"%s%s%s" % (color["cyan"],name,color["reset"])
         self.description = description
-        self.consume = False
         self.defense = 2 * defense
         self.equip = "armor"
 
+class Plot_Item(Stationary_Items):
+
+    def __init__(self,name,description,details):
+    # Initiate Weapon item attributes
+        super(Plot_Item,self).__init__()
+        self.name = name
+        self.displayName = u"%s%s%s" % (color["yellow"],name,color["reset"])
+        self.description = description
+        self.details = details
 
 tier1Weapons = [
     Weapon("Dagger","A rusty dagger.",1),
-    Weapon("Broad Sword","A boring sword.",1),
+    Weapon("Sword","A boring sword.",1),
     Weapon("Javelin","A pokey weapon.",1),
     Weapon("Pistol","A crummy pistol.",1)
     ]
@@ -97,9 +109,9 @@ tier1Armor = [
     ]
 
 tier1Drinks = [
-    Drink("Beer","Warm beer"),
-    Drink("Wine","Dank wine"),
-    Drink("Orange Juice","Spoiled orange juice.")
+    Drink("Beer","Warm beer\n+20HP",20),
+    Drink("Wine","Dank wine\n+15HP",15),
+    Drink("Orange Juice","Spoiled orange juice.\n+25HP",25)
     ]
 
 # list of tier1 items. used for random function

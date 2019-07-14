@@ -1,5 +1,6 @@
 import rooms
 import copy
+import random
 
 color = {
     "black": u"\u001b[30;1m",
@@ -27,6 +28,17 @@ class Fists(object):
         self.description = "wimpy looking fists"
         self.power = 1
 
+class Staff(object):
+    """
+    Class for keeping track of the default mage weapon.
+    """
+
+    def __init__(self):
+
+        self.name = "Horadric Staff"
+        self.description = "Horadric Staff"
+        self.power = 1
+
 class Naked(object):
     """
     Class for keeping track of when the user does not have armor equipped.
@@ -37,6 +49,18 @@ class Naked(object):
         self.name = "Bday Suit"
         self.description = "absolutely nothing"
         self.defense = 0
+
+class TristramRobes(object):
+    """
+    Class for keeping track of Decard Cain's clothes.
+    """
+
+    def __init__(self):
+
+        self.name = "Tristram Robes"
+        self.description = "Holy Robes from Tristram"
+        self.defense = 99
+
 
 class Character(object):
     """
@@ -60,6 +84,7 @@ class Character(object):
         self.inventory = []
         self.equipped_weapon = Fists()
         self.equipped_armor = Naked()
+        self.pk = False
 
     def __str__(self):
         # Define the default string representation of the warrior class
@@ -226,7 +251,7 @@ class Character(object):
                          " Level   :  {0}{1}{2}    Class :  {3}{4}{5}     Current Room :  {6}{7}{8}".format(color["yellow"],
                             self.level,color["reset"],color["yellow"],self.type,color["reset"],color["yellow"],self.room.name,color["reset"]),
                          "********************************************************************************",
-                         (" Health     :  {0}{1}{2}/{3}{4}{5}" + " "*(37-a) + "Weapon:  {6}{7}{8}").format(color["red"],
+                         (" Health     :  {0}{1:g}{2}/{3}{4:g}{5}" + " "*(37-a) + "Weapon:  {6}{7}{8}").format(color["red"],
                          self.health,color["reset"],color["yellow"],self.max_health,color["reset"],color["red"],self.equipped_weapon.name,color["reset"]),
                          (" Experience :  {0}{1}{2}" + " "*(38-b) + "Armor :  {3}{4}{5}").format(color["yellow"],
                          self.exp,color["reset"],color["red"],self.equipped_armor.name,color["reset"]),
@@ -239,7 +264,7 @@ class Character(object):
 
         return status_screen
 
-class Warrior(Character):
+class Human(Character):
     """
     Creates the Warrior class which inherits all of the properties from the
     Character class.
@@ -247,61 +272,82 @@ class Warrior(Character):
 
     def __init__(self):
         # Generate Warrior specific attributes
-        super(Warrior,self).__init__()
-        self.type = "Warrior"
-        self.base_power = 1
+        super(Human,self).__init__()
+        self.type = "Human"
+        self.base_power = 1.
         self.power = self.base_power * self.equipped_weapon.power
-        self.health = 100
-        self.max_health = 100
+        self.health = max(0,100)
+        self.max_health = 100.
         self.base_defense = .9
         self.defense = self.base_defense * self.equipped_armor.defense
         self.evade_chance = 20
         self.magic = 1
-        self.critical = 1.2
+        self.critical = 2
         self.crit_chance = 10
         self.spells = {}
 
-class Mage(Character):
+class Proprietor(Character):
     """
     Creates the Mage class which inherits all of the properties from the
     Character class.
     """
 
-    def __init__(self):
+    def __init__(self,name):
         #Generate Mage specific attributes
-        super(Mage,self).__init__()
+        super(Proprietor,self).__init__()
+        self.name = name
+        self.pk = True
+        self.level = 99
         self.type = "Mage"
-        self.power = 1
-        self.health = 90
-        self.max_health = 90
-        self.defense = .97
-        self.evade_chance = 15
-        self.magic = 5
-        self.critical = 1.2
-        self.crit_chance = 8
-        self.equipped_weapon = {"Staff": 2}
+        self.credits = 9999999
+        self.exp = 999999999
+        self.equipped_weapon = Staff()
+        self.equipped_armor = TristramRobes()
+        self.base_power = 9999
+        self.power = self.base_power * self.equipped_weapon.power
+        self.health = 9999
+        self.max_health = 9999
+        self.base_defense = 99
+        self.defense = self.base_defense * self.equipped_armor.defense
+        self.evade_chance = 100
+        self.magic = 9999
+        self.critical = 99
+        self.crit_chance = 100
         self.spells = {"Spark": 10, "Storm": 12}
 
-class Rogue(Character):
+class Enemy(Character):
     """
     Creates the Rogue class which inherits all of the properties from the
     Character class.
     """
 
+
     def __init__(self):
         #Generate Rogue specific attributes
-        super(Rogue,self).__init__()
-        self.type = "Rogue"
-        self.power = 3
-        self.health = 100
-        self.max_health = 100
-        self.defense = .95
-        self.evade_chance = 10
-        self.magic = 1
+        names = ["Rogue",
+                 "Ghoul",
+                 "Tonberry",
+                 "Jabberwocky",
+                 "Gremlin",
+                 "Troll",
+                 "BoogeyMan",
+                 "Dragon"]
+        super(Enemy,self).__init__()
+        self.type = "Enemy"
+        self.name = random.choice(names)
+        self.exp = random.choice(range(90,101))
+        self.credits = random.choice(range(0,11))
+        self.pk = True
+        self.base_power = random.choice(range(1,4))
+        self.power = self.base_power * self.equipped_weapon.power
+        self.health = max(0,random.choice(range(10,20)))
+        self.max_health = self.health
+        self.base_defense = 1 
+        self.defense = self.base_defense * self.equipped_armor.defense
+        self.evade_chance = 0
+        self.magic = 0
         self.critical = 1.5
-        self.crit_chance = 6
-        self.equipped_weapon = {"Daggers": 8}
-        self.spells = {}
+        self.crit_chance = 5
 
 class Daemon(Character):
     """
