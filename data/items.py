@@ -129,3 +129,13 @@ def random_items():
         itemsList.append(random.choice(itemType))
 
     return itemsList
+
+def enemy_items():
+    """
+    Function that handles randomly selected the inventory
+    items for an instantiated enemy.
+    """
+
+    itemType = random.choice(tier1Items)
+    
+    return random.choice(itemType)

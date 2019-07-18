@@ -1,6 +1,7 @@
 import rooms
 import copy
 import random
+import items
 
 color = {
     "black": u"\u001b[30;1m",
@@ -15,17 +16,17 @@ color = {
 
 }
 
-class Fists(object):
+class DefaultWeapon(object):
     """
     Simple class to use for when the character does not have a weapon equipped.
     This will be added to the character.equpped_weapon attribute when using
     the unequip command.
     """
 
-    def __init__(self):
+    def __init__(self,name="Fists"):
 
-        self.name = "Fists"
-        self.description = "wimpy looking fists"
+        self.name = name
+        self.description = "Wimpy Fists"
         self.power = 1
 
 class Staff(object):
@@ -39,14 +40,14 @@ class Staff(object):
         self.description = "Horadric Staff"
         self.power = 1
 
-class Naked(object):
+class DefaultArmor(object):
     """
     Class for keeping track of when the user does not have armor equipped.
     """
 
-    def __init__(self):
+    def __init__(self,name="Nothing"):
 
-        self.name = "Bday Suit"
+        self.name = name
         self.description = "absolutely nothing"
         self.defense = 0
 
@@ -82,9 +83,10 @@ class Character(object):
         self.level = 1
         self.exp = 0
         self.inventory = []
-        self.equipped_weapon = Fists()
-        self.equipped_armor = Naked()
+        self.equipped_weapon = DefaultWeapon()
+        self.equipped_armor = DefaultArmor()
         self.pk = False
+        self.talent = "None"
 
     def __str__(self):
         # Define the default string representation of the warrior class
@@ -109,7 +111,7 @@ class Character(object):
 
                 # swaps item back into inventory if it isn't the default armor
                 # if equipped item exists in inventory then +1 the quantity
-                if self.equipped_armor.name != "Bday Suit":
+                if self.equipped_armor.name != "Nothing":
                     for old in self.inventory:
                         if old.name == self.equipped_armor.name:
                             old.quantity = old.quantity + 1
@@ -184,7 +186,7 @@ class Character(object):
         weaponName = self.equipped_weapon.name
 
         # determine the armor is equipped and not the default 'armor'
-        if choice == armorName and armorName != "Bday Suit":
+        if choice == armorName and armorName != "Nothing":
             # increment item in inventory if multiples exist
             for item in self.inventory:
                 if item.name == choice:
@@ -194,7 +196,7 @@ class Character(object):
                 self.inventory.append(self.equipped_armor)
 
             # equip default 'armor' and recalculate defense
-            self.equipped_armor = Naked()
+            self.equipped_armor = DefaultArmor()
             self.defense = self.base_defense * self.equipped_armor.defense
             return True
 
@@ -209,7 +211,7 @@ class Character(object):
                 self.inventory.append(self.equipped_weapon)
 
             # equip default weapon and recalculate power
-            self.equipped_weapon = Fists()
+            self.equipped_weapon = DefaultWeapon()
             self.power = self.base_power * self.equipped_weapon.power
             return True
 
@@ -251,7 +253,7 @@ class Character(object):
                          " Level   :  {0}{1}{2}    Class :  {3}{4}{5}     Current Room :  {6}{7}{8}".format(color["yellow"],
                             self.level,color["reset"],color["yellow"],self.type,color["reset"],color["yellow"],self.room.name,color["reset"]),
                          "********************************************************************************",
-                         (" Health     :  {0}{1:g}{2}/{3}{4:g}{5}" + " "*(37-a) + "Weapon:  {6}{7}{8}").format(color["red"],
+                         (" Health     :  {0}{1:g}{2}/{3}{4:g}{5}" + " "*(39-a) + "Weapon:  {6}{7}{8}").format(color["red"],
                          self.health,color["reset"],color["yellow"],self.max_health,color["reset"],color["red"],self.equipped_weapon.name,color["reset"]),
                          (" Experience :  {0}{1}{2}" + " "*(38-b) + "Armor :  {3}{4}{5}").format(color["yellow"],
                          self.exp,color["reset"],color["red"],self.equipped_armor.name,color["reset"]),
@@ -274,10 +276,10 @@ class Human(Character):
         # Generate Warrior specific attributes
         super(Human,self).__init__()
         self.type = "Human"
-        self.base_power = 1.
+        self.base_power = 5.
         self.power = self.base_power * self.equipped_weapon.power
-        self.health = max(0,100)
-        self.max_health = 100.
+        self.health = max(0,500)
+        self.max_health = 500.
         self.base_defense = .9
         self.defense = self.base_defense * self.equipped_armor.defense
         self.evade_chance = 20
@@ -285,6 +287,8 @@ class Human(Character):
         self.critical = 2
         self.crit_chance = 10
         self.spells = {}
+        self.talent = "Steal"
+        self.stealth = .2
 
 class Proprietor(Character):
     """
@@ -303,11 +307,11 @@ class Proprietor(Character):
         self.exp = 999999999
         self.equipped_weapon = Staff()
         self.equipped_armor = TristramRobes()
-        self.base_power = 9999
+        self.base_power = 9999.
         self.power = self.base_power * self.equipped_weapon.power
-        self.health = 9999
-        self.max_health = 9999
-        self.base_defense = 99
+        self.health = 9999.
+        self.max_health = 9999.
+        self.base_defense = 99.
         self.defense = self.base_defense * self.equipped_armor.defense
         self.evade_chance = 100
         self.magic = 9999
@@ -324,30 +328,33 @@ class Enemy(Character):
 
     def __init__(self):
         #Generate Rogue specific attributes
-        names = ["Rogue",
-                 "Ghoul",
-                 "Tonberry",
-                 "Jabberwocky",
-                 "Gremlin",
-                 "Troll",
-                 "BoogeyMan",
-                 "Dragon"]
+        enemy = random.choice([["Rogue",DefaultWeapon("Dagger")],
+                               ["Ghoul",DefaultWeapon("Grimey Hands")],
+                               ["Tonberry",DefaultWeapon("Knife")],
+                               ["Jabberwocky",DefaultWeapon("Claws")],
+                               ["Gremlin",DefaultWeapon("Teeth")],
+                               ["Troll",DefaultWeapon("Club")],
+                               ["BoogeyMan",DefaultWeapon("Fists")],
+                               ["Dragon",DefaultWeapon("Sharp Claws")]])
         super(Enemy,self).__init__()
         self.type = "Enemy"
-        self.name = random.choice(names)
+        self.name = enemy[0]
+        self.equipped_weapon = enemy[1]
         self.exp = random.choice(range(90,101))
         self.credits = random.choice(range(0,11))
         self.pk = True
-        self.base_power = random.choice(range(1,4))
+        self.base_power = random.choice(range(10,16))
         self.power = self.base_power * self.equipped_weapon.power
-        self.health = max(0,random.choice(range(10,20)))
+        self.health = float(max(0,random.choice(range(100,200))))
         self.max_health = self.health
-        self.base_defense = 1 
+        self.base_defense = 1. 
         self.defense = self.base_defense * self.equipped_armor.defense
         self.evade_chance = 0
         self.magic = 0
         self.critical = 1.5
         self.crit_chance = 5
+        if random.random() < 1:
+            self.inventory.append(items.enemy_items())
 
 class Daemon(Character):
     """

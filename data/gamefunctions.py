@@ -3,6 +3,7 @@ import random
 
 from character import Human
 from banner import bannerText
+from StartBanner import ReadyPlayerOne
 
 # empty list for tracking all players
 players = {}
@@ -119,6 +120,8 @@ def process_commands(mud):
             "e": enter_command,
             "equip": equip_command,
             "eq": equip_command,
+            "drop": drop_command,
+            "d": drop_command,
             "help": help_command,
             "h": help_command,
             "interact": interact_command,
@@ -135,6 +138,7 @@ def process_commands(mud):
             "q": quit_command,
             "say": say_command,
             "s": say_command,
+            "steal": steal_command,
             "shout": shout_command,
             "sh": shout_command,
             "status": status_command,
@@ -196,7 +200,8 @@ def attack_command(mud,user,command,params):
                      "meekly lunges forth.",
                      "attacks!",
                      "with a steady hand, attempts to crush the enemy.",
-                     "growing evermore desperate, chucks their weapon at the enemy."]
+                     "growing evermore desperate, chucks their weapon at the enemy.",
+                     "is on the brink of giving up...but gives it another go."]
 
     # store the player's current data
     rm = players[user].room
@@ -207,7 +212,7 @@ def attack_command(mud,user,command,params):
     # Iterate through NPCs to find a match 
     for npc in rm.npcs:
         # if a match, determine if the the npc can be attacked (pk). 
-        if npc.name == params:
+        if npc.name.lower() == params.lower():
 
            #store npc's data for sending messages to user
            nN = npc.name
@@ -369,7 +374,8 @@ def create_player(mud,user,command,params):
         # send the new player a welcome message
         mud.send_message(user,"\033[2J")
         mud.send_message(user,"\033[H")
-        mud.send_message(user,"\033[33;7;5mReady Player One.\033[0m")
+        for line in ReadyPlayerOne:
+            mud.send_message(user,line)
         mud.send_message(user,"Type '[h]elp' for a list of commands.")
 
         # send the new player the description of their current room
@@ -377,6 +383,34 @@ def create_player(mud,user,command,params):
 
         # send player prompt to the user
         prompt_info(mud,user)
+
+def drop_command(mud,user,command,params):
+    """
+    Function that handles the drop command. The player can drop on item in 
+    their inventory. This item will be removed from the player's
+    inventory.
+    """
+
+    # store the player's current room
+    rm = players[user].room
+
+    for onHand in players[user].inventory:
+    # Iterate through inventory
+        if onHand.name.lower() == params.lower():
+        # search for a match with the user input
+            if onHand.quantity > 1:
+                rm.items.append(onHand)
+                onHand.quantity = onHand.quantity - 1
+                mud.send_message(user,"Dropped %s." % onHand.name)
+                break
+            else:
+                rm.items.append(onHand)
+                players[user].inventory.remove(onHand)
+                mud.send_message(user,"Dropped %s." % onHand.name)
+                break
+
+    else:
+        mud.send_message(user,"Cannot drop %s." % params)
 
 def enter_command(mud,user,command,params):
     """
@@ -463,8 +497,12 @@ def help_command(mud,user,command,params):
         mud.send_message(user,"Full Help Menu:")
         mud.send_message(user,"  {}a{}ttack <npc>".format(color["red"],color["reset"]) +
             "         - Attacks an NPC. Be sure to examine (inspect) prior to avoid an embarrasing defeat.")
-        mud.send_message(user,"  {}e{}nter <object>".format(color["red"],color["reset"]) +
-            "       - Moves through the exit specified, e.g. 'enter north'")
+        mud.send_message(user,"  {}c{}onsume <item>".format(color["red"],color["reset"]) +
+            "       - Consumes an item (drink or food) that is held in the inventory for HP restoration.")
+        mud.send_message(user,"  {}d{}rop <item>".format(color["red"],color["reset"]) +
+            "          - Drops an item from the inventory. e.g. 'drop Sword'")
+        mud.send_message(user,"  {}e{}nter <exit>".format(color["red"],color["reset"]) +
+            "         - Moves through the exit specified, e.g. 'enter north'")
         mud.send_message(user,"  {}un{}/{}eq{}uip <item>".format(color["red"],color["reset"],color["red"],color["reset"]) +
             "      - Equips/Unequips an item, e.g. 'equip Dagger or unequip Dagger'")
         mud.send_message(user,"  {}i{}nteract <item>".format(color["red"],color["reset"]) +
@@ -475,8 +513,8 @@ def help_command(mud,user,command,params):
             "                 - Examines the surroundings, e.g. 'look'")
         mud.send_message(user,"  {}u{}n/{}m{}ute <player>".format(color["red"],color["reset"],color["red"],color["reset"]) +
             "     - Mutes or unmutes a specific player, e.g. 'mute john' or 'unmute john'")
-        mud.send_message(user,"  {}p{}ickup <item>".format(color["red"],color["reset"]) +
-            "        - Pickups an item, e.g. 'pickup Dagger.'")
+        mud.send_message(user,"  {}p{}ickup all/<item>".format(color["red"],color["reset"]) +
+            "    - Pick up an item or all items at once, e.g. 'pickup all.'")
         mud.send_message(user,"  {}q{}uit".format(color["red"],color["reset"]) +
             "                 - Closes the session to the MUD server.")
         mud.send_message(user,"  {}s{}ay <message>".format(color["red"],color["reset"]) +
@@ -493,8 +531,8 @@ def help_command(mud,user,command,params):
     else:
         #Partial help Menu
         mud.send_message(user,"Short Help Menu:")
-        mud.send_message(user,"  {}e{}nter <object>".format(color["red"],color["reset"]) +
-            "       - Moves through the exit specified, e.g. 'enter north'")
+        mud.send_message(user,"  {}e{}nter <exit>".format(color["red"],color["reset"]) +
+            "         - Moves through the exit specified, e.g. 'enter north'")
         mud.send_message(user,"  {}i{}nteract <item>".format(color["red"],color["reset"]) +
             "      - Further examines an item or player, e.g 'i [item]/[name]'")
         mud.send_message(user,"  {}l{}ook".format(color["red"],color["reset"]) +
@@ -551,7 +589,6 @@ def inventory_command(mud,user,command,params):
 
     weapon = players[user].equipped_weapon.description
     armor = players[user].equipped_armor.description
-
     mud.send_message(user, ("Your weapon of choice: %s" % weapon))
     mud.send_message(user, ("You are wearing: %s" % armor))
     mud.send_message(user, "You have the following items:")
@@ -646,36 +683,57 @@ def pickup_command(mud,user,command,params):
     """
     Function that handles the pickup command. The player can pickup an item
     based on the item's pickup_value. This item will be added to the player's
-    inventory.
+    inventory. If all selected, pickup every item in the room.
     """
 
     # store the player's current room
     rm = players[user].room
-
-    # Iterate through items within the current room
-    for item in rm.items:
-        # Determine if the player is interacting with a valid object
-        if item.name == params and item.pickup_value:
-            # Iterate through items in inventory
+    if params.lower() == "all":
+        itemsGained = []
+        for item in rm.items:
             for onHand in players[user].inventory:
-                # check if item currently exists in inventory
                 if onHand.name == item.name:
-                    # increment quantity and inform player
                     onHand.quantity = onHand.quantity + 1
-                    rm.items.remove(item)
-                    mud.send_message(user, "%s added to inventory" % item.displayName)
+                    mud.send_message(user,"%s added to inventory" % item.displayName)
+                    itemsGained.append(item)
                     break
             else:
-                # append new item into the inventory
-                players[user].inventory.append(item)
-                rm.items.remove(item)
-                mud.send_message(user, "%s added to inventory" % item.displayName)
+            # append item to inventory only if pickup value of the item is set to true
+                if item.pickup_value: 
+                    players[user].inventory.append(item) 
+                    mud.send_message(user,"%s added to inventory" % item.displayName)
+                    itemsGained.append(item)
+                else:
+                    mud.send_message(user,"Cannot pickup %s" % item.displayName)
+                    continue
+        for item in itemsGained:
+            rm.items.remove(item)
 
-    # Iterate through available players.
-    for pid,pl in players.items():
-        # check for match
-        if players[pid].name == params:
-            mud.send_message(user, "Hey no picking up on other players.")
+    else:
+        # Iterate through items within the current room
+        for item in rm.items:
+        
+            if item.name.lower() == params.lower() and item.pickup_value:
+                # Iterate through items in inventory
+                for onHand in players[user].inventory:
+                    # check if item currently exists in inventory
+                    if onHand.name == item.name:
+                        # increment quantity and inform player
+                        onHand.quantity = onHand.quantity + 1
+                        rm.items.remove(item)
+                        mud.send_message(user, "%s added to inventory" % item.displayName)
+                        break
+                else:
+                    # append new item into the inventory
+                    players[user].inventory.append(item)
+                    rm.items.remove(item)
+                    mud.send_message(user, "%s added to inventory" % item.displayName)
+        
+        # Iterate through available players.
+        for pid,pl in players.items():
+            # check for match
+            if players[pid].name == params:
+                mud.send_message(user, "Hey no picking up on other players.")
 
 def prompt_info(mud,user):
     """
@@ -749,6 +807,44 @@ def say_command(mud,user,command,params):
         if pl.room.name == players[user].room.name and players[user].name.lower() not in pl.muted_players:
             # send them a message telling them what the player said
             mud.send_message(pid,"%s says: %s" % (players[user].name,params) )
+
+def steal_command(mud,user,command,params):
+    """
+    Function that handles the steal command. Calculates
+    the chance for success and if successful takes an
+    item from the enemy and removes it from its inventory.
+    """
+
+    rm = players[user].room
+    chance = players[user].stealth
+    
+    if random.random() < chance:
+        for npc in rm.npcs:
+            if npc.name.lower() == params.lower():
+                
+                if len(npc.inventory) > 0:
+
+                    for item in players[user].inventory:
+                        if npc.inventory[0] == item:
+                            item.quantity = item.quantity + 1
+                            mud.send_message(user,"Stole %s from %s!" % (npc.inventory[0].name,npc.name))
+                            npc.inventory.remove(npc.inventory[0])
+                            break
+                    else:
+                        players[user].inventory.append(npc.inventory[0])
+                        mud.send_message(user,"Stole %s from %s!" % (npc.inventory[0].name,npc.name))
+                        npc.inventory.remove(npc.inventory[0])
+                        break
+                    break
+                else:
+                    mud.send_message(user,"No item to steal.")
+                    break
+        else:
+                mud.send_message(user,"Can't steal from %s." % params)
+
+    else:
+        mud.send_message(user,"Steal attempt failed!")
+
 
 def shout_command(mud,user,command,params):
     """
