@@ -124,8 +124,8 @@ def process_commands(mud):
             "d": drop_command,
             "help": help_command,
             "h": help_command,
-            "interact": interact_command,
-            "i": interact_command,
+            "inspect": inspect_command,
+            "i": inspect_command,
             "inventory": inventory_command,
             "in": inventory_command,
             "look": look_command,
@@ -505,8 +505,8 @@ def help_command(mud,user,command,params):
             "         - Moves through the exit specified, e.g. 'enter north'")
         mud.send_message(user,"  {}un{}/{}eq{}uip <item>".format(color["red"],color["reset"],color["red"],color["reset"]) +
             "      - Equips/Unequips an item, e.g. 'equip Dagger or unequip Dagger'")
-        mud.send_message(user,"  {}i{}nteract <item>".format(color["red"],color["reset"]) +
-            "      - Further examines an item or player, e.g 'i [item]/[name]'")
+        mud.send_message(user,"  {}i{}nspect <item>".format(color["red"],color["reset"]) +
+            "       - Further examines an item or player, e.g 'i [item]/[name]'")
         mud.send_message(user,"  {}in{}ventory".format(color["red"],color["reset"]) +
             "            - Lists all of the items in your inventory, e.g. 'inventory'")
         mud.send_message(user,"  {}l{}ook".format(color["red"],color["reset"]) +
@@ -533,7 +533,7 @@ def help_command(mud,user,command,params):
         mud.send_message(user,"Short Help Menu:")
         mud.send_message(user,"  {}e{}nter <exit>".format(color["red"],color["reset"]) +
             "         - Moves through the exit specified, e.g. 'enter north'")
-        mud.send_message(user,"  {}i{}nteract <item>".format(color["red"],color["reset"]) +
+        mud.send_message(user,"  {}i{}nspect <item>".format(color["red"],color["reset"]) +
             "      - Further examines an item or player, e.g 'i [item]/[name]'")
         mud.send_message(user,"  {}l{}ook".format(color["red"],color["reset"]) +
             "                 - Examines the surroundings, e.g. 'look'")
@@ -545,11 +545,11 @@ def help_command(mud,user,command,params):
             "            - Displays the full help menu.")
 
 
-def interact_command(mud,user,command,params):
+def inspect_command(mud,user,command,params):
     """
-    Function that handles the interact command. The player can either interact
-    with an item in the room or a character that is in the room. If they
-    interact with a character then the class string will be presented to the
+    Function that handles the ispect command. The player can either inspect
+    an item in the room or a character that is in the room. If they
+    inspect a character then the character status display be presented to the
     player.
     """
 
@@ -558,23 +558,27 @@ def interact_command(mud,user,command,params):
 
     # Iterate through items within the current room
     for item in rm.items:
-        # Determine if the player is interacting with a valid object
-        if item.name == params:
+        # Determine if the player is ispecting a valid object
+        if item.name.lower() == params.lower():
             # Send the description of the item
+            mud.send_message(user, item.description)
+
+    for item in players[user].inventory:
+        if item.name.lower() == params.lower():
             mud.send_message(user, item.description)
 
     # Iterate through NPCs to find a match 
     for npc in rm.npcs:
         # if a match, display the NPCs status info to the player
-        if npc.name == params:
+        if npc.name.lower() == params.lower():
             status_display = npc.get_status()
             for line in status_display:
                 mud.send_message(user, line)
 
-    # Allows the player to get info on other players by interacting with them.
+    # Allows the player to get info on other players by inspecting them.
     for pid,pl in players.items():
         # Check through all players
-        if players[pid].name == params:
+        if players[pid].name.lower() == params.lower():
             # Display the default character string
             #mud.send_message(user, str(players[pid]))
              status_display = players[pid].get_status()
