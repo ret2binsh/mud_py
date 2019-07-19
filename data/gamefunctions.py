@@ -246,7 +246,8 @@ def attack_command(mud, user, command, params):
                         npc.health = max(0, (npc.health - netDamage))
                         mud.send_message(user, "%sCritical Attack!!%s" % (
                             color["gBlink"], color["reset"]))
-                        mud.send_message(user, "%s%s attacks %s with %s for %g damage!%s" % (color["blue"], pN, nN, pW, netDamage, color["reset"]))
+                        mud.send_message(user, "%s%s attacks %s with %s for %g damage!%s" % (
+                            color["blue"], pN, nN, pW, netDamage, color["reset"]))
                     # non-critical hit
                     else:
                         pA = players[user].power
@@ -255,7 +256,8 @@ def attack_command(mud, user, command, params):
                         npc.health = max(0, (npc.health - netDamage))
                         mud.send_message(user, "%s%s %s%s" % (
                             color["blue"], pN, random.choice(attack_dialog), color["reset"]))
-                        mud.send_message(user, "%s%s attacks %s with %s for %g damage!%s" % (color["blue"], pN, nN, pW, netDamage, color["reset"]))
+                        mud.send_message(user, "%s%s attacks %s with %s for %g damage!%s" % (
+                            color["blue"], pN, nN, pW, netDamage, color["reset"]))
 
                     # provides an enemy prompt to imitate a back-and-forth battle sequence
                     enemy_prompt(mud, user, npc)
@@ -269,7 +271,8 @@ def attack_command(mud, user, command, params):
                                 0, (players[user].health - netDamage))
                             mud.send_message(user, "%sCritical Attack!%s" % (
                                 color["gBlink"], color["reset"]))
-                            mud.send_message(user, "%s%s attacks %s with %s for %g damage!%s" % (color["red"], nN, pN, nW, netDamage, color["reset"]))
+                            mud.send_message(user, "%s%s attacks %s with %s for %g damage!%s" % (
+                                color["red"], nN, pN, nW, netDamage, color["reset"]))
                         else:
                             nA = npc.power
                             netDamage = max(0, (nA - pD))
@@ -277,7 +280,8 @@ def attack_command(mud, user, command, params):
                                 0, (players[user].health - netDamage))
                             mud.send_message(user, "%s%s %s%s" % (
                                 color["red"], nN, random.choice(attack_dialog), color["reset"]))
-                            mud.send_message(user, "%s%s attacks %s with %s for %g damage!%s" % (color["red"], nN, pN, nW, netDamage, color["reset"]))
+                            mud.send_message(user, "%s%s attacks %s with %s for %g damage!%s" % (
+                                color["red"], nN, pN, nW, netDamage, color["reset"]))
                     else:
                         mud.send_message(user, "%s has perished!" % nN)
                         prompt_info(mud, user)
@@ -803,7 +807,8 @@ def prompt_info(mud, user):
     n = players[user].name
 
     # creates the prompt and colors the username as yellow and current health as red
-    prompt = "%s%s%s[%s%g%s/%d]%s$%s" % (color["yellow"], n, color["reset"], color["red"], h, color["reset"], m,color["yellow"],color["reset"])
+    prompt = "%s%s%s[%s%g%s/%d]%s$%s" % (color["yellow"], n, color["reset"],
+                                         color["red"], h, color["reset"], m, color["yellow"], color["reset"])
     mud.send_prompt(user, prompt)
 
 
@@ -820,7 +825,8 @@ def enemy_prompt(mud, user, enemy):
     n = enemy.name
 
     # creates the prompt and colors the username as yellow and current health as red
-    prompt = "%s%s%s[%s%g%s/%d]%s$%s" % (color["yellow"], n, color["reset"], color["red"], h, color["reset"], m,color["yellow"],color["reset"])
+    prompt = "%s%s%s[%s%g%s/%d]%s$%s" % (color["yellow"], n, color["reset"],
+                                         color["red"], h, color["reset"], m, color["yellow"], color["reset"])
     mud.send_prompt(user, prompt)
 
 
@@ -916,13 +922,15 @@ def shout_command(mud, user, command, params):
     """
 
     # go through every player in the game
-    for pid,pl in players.items():
+    for pid, pl in players.items():
         # if they are not muted
         if players[user].name.lower() not in pl.muted_players:
             # send message to everyone
-            mud.send_message(pid,"%s shouts: %s" % (players[user].name,params))
+            mud.send_message(pid, "%s shouts: %s" %
+                             (players[user].name, params))
 
-def status_command(mud,user,command,params):
+
+def status_command(mud, user, command, params):
     """
     Function that handles the status command. This will display a huge listing
     of all of the stats and attributes for the player.
@@ -943,25 +951,28 @@ def unknown_command(mud, user, command, params):
     # send back an 'unknown command' message unless empty. Then just do a carriage return
     if command == "":
 
-        prompt_info(mud,user)
+        prompt_info(mud, user)
 
     else:
 
         mud.send_message(user, "Unknown command '%s'" % command)
         mud.send_message(user, "Ensure to use lowercase commands.")
 
-def who_command(mud,user,command,params):
-	"""
-	Displays all the players in the game and which room they are located.
-	"""
-	for pid,pl in players.items():
-            if mud.get_afk_status(pid):
-		mud.send_message(user,"%s(AFK) is currently located: %s" % (players[pid].name,players[pid].room.name))
-            else:
-		mud.send_message(user,"%s is currently located: %s" % (players[pid].name,players[pid].room.name))
-                
 
-def whisper_command(mud,user,command,params):
+def who_command(mud, user, command, params):
+    """
+    Displays all the players in the game and which room they are located.
+    """
+    for pid, pl in players.items():
+        if mud.get_afk_status(pid):
+            mud.send_message(user, "%s(AFK) is currently located: %s" % (
+                players[pid].name, players[pid].room.name))
+        else:
+            mud.send_message(user, "%s is currently located: %s" %
+                             (players[pid].name, players[pid].room.name))
+
+
+def whisper_command(mud, user, command, params):
     """
     Function that handles the whisper command. Allows the player to private
     message any other player so that it does not broadcast to all other players.
