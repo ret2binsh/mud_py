@@ -45,6 +45,7 @@ class MudServer(object):
             self.buffer = buffer
             self.lastcheck = lastcheck
             self.lastactive = lastactive
+            self.afk = False
             self.authenticated = authenticated
             self.logintime = datetime.datetime.fromtimestamp(lastactive).strftime('%c')
 
@@ -153,6 +154,14 @@ class MudServer(object):
 
         self._clients[clid].authenticated = status
         return status
+
+    def get_afk_status(self,clid):
+        """
+        Returns the afk state of the requested user. Used for appending 'afk' to
+        player's name when they are...away from keyboard.
+        """
+    
+        return self._clients[clid].afk
 
     def get_disconnected_players(self):
         """
@@ -294,8 +303,16 @@ class MudServer(object):
             # Checks if the client is in the authenticated state
             if cl.authenticated:
 
-                # if authenticated they have 60 minutes of inactivity
-                if time.time() - cl.lastactive < 3600: continue
+                # if authenticated they have 60 minutes of inactivity and after 5min AFK will be set to true
+                if time.time() - cl.lastactive < 300: 
+                   if self._clients[user].afk == True:
+                       self._clients[user].afk = False
+                       continue
+                   else:
+                       continue
+                elif time.time() - cl.lastactive < 3600:
+                    self._clients[user].afk = True
+                    continue 
 
             else:
 

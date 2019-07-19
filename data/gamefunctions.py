@@ -19,6 +19,7 @@ color = {
     "magenta": u"\u001b[35;1m",
     "cyan": u"\u001b[36;1m",
     "white": u"\u001b[37;1m",
+    "reverse":u"\u001b[7m",
     "reset": u"\u001b[0m"
 
 }
@@ -113,6 +114,7 @@ def process_commands(mud):
         command_list = {
             "attack": attack_command,
             "a": attack_command,
+            "clear" : clear_command,
             "consume": consume_command,
             "c": consume_command,
             "crashthesystem": crash_command,
@@ -283,6 +285,15 @@ def attack_command(mud,user,command,params):
            else:
                 mud.send_message(user,"Cannot attack")
 
+def clear_command(mud,user,command,params):
+    """
+    Allows the player to clear their screen.
+    """
+
+    mud.send_message(user,"\033[2J")
+    mud.send_message(user,"\033[H")
+    
+
 def consume_command(mud,user,command,params):
     """
     Allows the player to consume food and beverages
@@ -305,8 +316,6 @@ def consume_command(mud,user,command,params):
                 item.quantity = item.quantity - 1
             else:
                 players[user].inventory.remove(item)
-
-
 
 def crash_command(mud,user,command,params):
     """
@@ -618,7 +627,10 @@ def look_command(mud,user,command,params):
         # if they're in the same room as the player
         if players[pid].room.name == players[user].room.name:
             # add their name to the list
-            playersHere.append(players[pid].name)
+            if mud.get_afk_status(pid):
+                playersHere.append(color["reverse"] + players[pid].name + "(AFK)" + color["reset"])
+            else:
+                playersHere.append(players[pid].name)
 
     roomItems = []
     # iterate through available items and append to list
@@ -896,7 +908,11 @@ def who_command(mud,user,command,params):
 	Displays all the players in the game and which room they are located.
 	"""
 	for pid,pl in players.items():
+            if mud.get_afk_status(pid):
+		mud.send_message(user,"%s(AFK) is currently located: %s" % (players[pid].name,players[pid].room.name))
+            else:
 		mud.send_message(user,"%s is currently located: %s" % (players[pid].name,players[pid].room.name))
+                
 
 def whisper_command(mud,user,command,params):
     """
