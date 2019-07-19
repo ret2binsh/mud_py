@@ -47,12 +47,13 @@ class MudServer(object):
             self.lastactive = lastactive
             self.afk = False
             self.authenticated = authenticated
-            self.logintime = datetime.datetime.fromtimestamp(lastactive).strftime('%c')
+            self.logintime = datetime.datetime.fromtimestamp(
+                lastactive).strftime('%c')
 
-            #Log each connection on initialization
-            with open('logs/connections.log','a+') as f:
-                f.write("New connection from %s on %s\n" % (self.address,self.logintime))
-
+            # Log each connection on initialization
+            with open('logs/connections.log', 'a+') as f:
+                f.write("New connection from %s on %s\n" %
+                        (self.address, self.logintime))
 
     # Used to store different types of occurences
     _EVENT_NEW_PLAYER = 1
@@ -155,12 +156,12 @@ class MudServer(object):
         self._clients[clid].authenticated = status
         return status
 
-    def get_afk_status(self,clid):
+    def get_afk_status(self, clid):
         """
         Returns the afk state of the requested user. Used for appending 'afk' to
         player's name when they are...away from keyboard.
         """
-    
+
         return self._clients[clid].afk
 
     def get_disconnected_players(self):
@@ -221,28 +222,28 @@ class MudServer(object):
         # for each client
         for cl in self._clients.values():
             # close the socket, disconnecting the client
-            #cl.socket.shutdown()
+            # cl.socket.shutdown()
             cl.socket.close()
         # stop listening for new clients
         self._listen_socket.close()
 
-
-    def _attempt_send(self,clid,data):
+    def _attempt_send(self, clid, data):
         # python 2/3 compatability fix - convert non-unicode string to unicode
-        if sys.version < '3' and not isinstance(data,unicode): data = unicode(data,"utf-8")
+        if sys.version < '3' and not isinstance(data, unicode):
+            data = unicode(data, "utf-8")
         try:
             # look up the client in the client map and use 'sendall' to send
             # the message string on the socket. 'sendall' ensures that all of
             # the data is sent in one go
-            self._clients[clid].socket.sendall(bytearray(data,"utf-8"))
+            self._clients[clid].socket.sendall(bytearray(data, "utf-8"))
         # KeyError will be raised if there is no client with the given id in
         # the map
-        except KeyError: pass
+        except KeyError:
+            pass
         # If there is a connection problem with the client (e.g. they have
         # disconnected) a socket error will be raised
         except socket.error:
             self._handle_disconnect(clid)
-
 
     def _check_for_new_connections(self):
 
@@ -298,53 +299,55 @@ class MudServer(object):
     def _check_for_stale_state(self):
 
         # go through all the clients
-        for user,cl in list(self._clients.items()):
+        for user, cl in list(self._clients.items()):
 
             # Checks if the client is in the authenticated state
             if cl.authenticated:
 
                 # if authenticated they have 60 minutes of inactivity and after 5min AFK will be set to true
-                if time.time() - cl.lastactive < 300: 
-                   if self._clients[user].afk == True:
-                       self._clients[user].afk = False
-                       continue
-                   else:
-                       continue
+                if time.time() - cl.lastactive < 300:
+                    if self._clients[user].afk == True:
+                        self._clients[user].afk = False
+                        continue
+                    else:
+                        continue
                 elif time.time() - cl.lastactive < 3600:
                     self._clients[user].afk = True
-                    continue 
+                    continue
 
             else:
 
                 # if they are not authenticated then they have 30 seconds
-                if time.time() - cl.lastactive < 30: continue
+                if time.time() - cl.lastactive < 30:
+                    continue
 
             # Disconnects client for inactivity
-            self.send_message(user, "You have been inactive for too long. Disconnecting...")
+            self.send_message(
+                user, "You have been inactive for too long. Disconnecting...")
             self._handle_disconnect(user)
-
 
     def _check_for_messages(self):
 
         # go through all the clients
-        for user,cl in list(self._clients.items()):
+        for user, cl in list(self._clients.items()):
 
             # we use 'select' to test whether there is data waiting to be read from
             # the client socket. The function takes 3 lists of sockets, the first being
             # those to test for readability. It returns 3 list of sockets, the first being
             # those that are actually readable.
-            rlist,wlist,xlist = select.select([cl.socket],[],[],0)
+            rlist, wlist, xlist = select.select([cl.socket], [], [], 0)
 
             # if the client socket wasn't in the readable list, there is no new data from
             # the client - we can skip it and move on to the next one
-            if cl.socket not in rlist: continue
+            if cl.socket not in rlist:
+                continue
 
             try:
                 # read data from the socket, using a max length of 4096
                 data = cl.socket.recv(4096).decode("latin1")
 
                 # process the data, stripping out any special Telnet commands
-                message = self._process_sent_data(cl,data)
+                message = self._process_sent_data(cl, data)
 
                 # if there was a message in the data
                 if message:

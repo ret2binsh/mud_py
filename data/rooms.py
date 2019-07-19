@@ -9,15 +9,16 @@ class Rooms(object):
     def __init__(self):
         self.npcs = ""
 
-    def enter_room(self,choice):
+    def enter_room(self, choice):
         # returns a room object using the roomExits dictionary
 
         return self.exits[choice]()
 
-    def get_credits(self,choice):
+    def get_credits(self, choice):
         # returns the credit value of the selected room.
 
         return self.exits[choice]().credits
+
 
 class OasisLobby(Rooms):
     """ Room class object that initializes with a name, long longDescription,
@@ -27,15 +28,16 @@ class OasisLobby(Rooms):
     """
 
     def __init__(self):
-        super(OasisLobby,self).__init__()
+        super(OasisLobby, self).__init__()
         self.name = "Oasis Main Lobby"
         self.credits = 0
         self.longDescription = ("Welcome to the Oasis. Here is where you start "
-            "your journey.\nThere are a few NPCs standing around but no one "
-            "apears to want to interact with you.")
+                                "your journey.\nThere are a few NPCs standing around but no one "
+                                "apears to want to interact with you.")
         self.description = "The Oasis Main Lobby."
         self.items = items.random_items()
         self.exits = {"north": OasisTransport}
+
 
 class OasisTransport(Rooms):
     """ Room class object that initializes with a name, long longDescription,
@@ -45,15 +47,15 @@ class OasisTransport(Rooms):
     """
 
     def __init__(self):
-        super(OasisTransport,self).__init__()
+        super(OasisTransport, self).__init__()
         self.name = "Oasis Transport"
         self.credits = 0
         self.longDescription = ("The Oasis Transport. From here you can travel "
-            "to any of the 27 sectors of the Oasis.\nBut be warned, some areas "
-            "require credits and others are dangerous for low-level players.")
+                                "to any of the 27 sectors of the Oasis.\nBut be warned, some areas "
+                                "require credits and others are dangerous for low-level players.")
         self.description = "The Oasis Tranport Station."
         self.items = items.random_items()
-        self.npcs = [character.Proprietor("Deckard Cain"),character.Enemy()]
+        self.npcs = [character.Proprietor("Deckard Cain"), character.Enemy()]
         self.exits = {"south": OasisLobby,
                       "EnderVerse": Eros}
 
@@ -66,19 +68,20 @@ class Eros(Rooms):
     """
 
     def __init__(self):
-        super(Eros,self).__init__()
+        super(Eros, self).__init__()
         self.name = "EnderVerse Docking Station"
         self.credits = 0
         self.longDescription = ("Welcome to the EnderVerse Sector. From here you "
-            "can visit many of the planets found\nwithin Orson Scott Cards' "
-            "Universe built around the Ender's Series.")
+                                "can visit many of the planets found\nwithin Orson Scott Cards' "
+                                "Universe built around the Ender's Series.")
         self.description = "EnderVerse Docking Station."
         self.items = items.random_items()
         self.npcs = [character.Enemy()]
-        self.items.append(items.Plot_Item("Book","Hive Queen and the Hedgemon","The "
+        self.items.append(items.Plot_Item("Book", "Hive Queen and the Hedgemon", "The "
                                           "Path you look for will be Gloriously Bright."))
         self.exits = {"OasisTransport": OasisTransport,
-		      "Path": Path}
+                      "Path": Path}
+
 
 class Path(Rooms):
     """ Room class object that initializes with a name, long longDescription,
@@ -88,12 +91,12 @@ class Path(Rooms):
     """
 
     def __init__(self):
-        super(Path,self).__init__()
+        super(Path, self).__init__()
         self.name = "Path Transport Station"
         self.credits = 0
         self.longDescription = ("Welcome to the World of Path. Home of Han Fei Tzu, "
-            "father of Qiang Jao.\nThis is the world of the God Spoken, where a "
-            "terrible genetic experiment plagued the planet with a double-edged sword.")
+                                "father of Qiang Jao.\nThis is the world of the God Spoken, where a "
+                                "terrible genetic experiment plagued the planet with a double-edged sword.")
         self.description = "EnderVerse Docking Station."
         self.items = items.random_items()
         self.npcs = [character.Enemy()]

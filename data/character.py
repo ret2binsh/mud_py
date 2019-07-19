@@ -16,6 +16,7 @@ color = {
 
 }
 
+
 class DefaultWeapon(object):
     """
     Simple class to use for when the character does not have a weapon equipped.
@@ -23,11 +24,12 @@ class DefaultWeapon(object):
     the unequip command.
     """
 
-    def __init__(self,name="Fists"):
+    def __init__(self, name="Fists"):
 
         self.name = name
         self.description = "Wimpy Fists"
         self.power = 1
+
 
 class Staff(object):
     """
@@ -40,16 +42,18 @@ class Staff(object):
         self.description = "Horadric Staff"
         self.power = 1
 
+
 class DefaultArmor(object):
     """
     Class for keeping track of when the user does not have armor equipped.
     """
 
-    def __init__(self,name="Nothing"):
+    def __init__(self, name="Nothing"):
 
         self.name = name
         self.description = "absolutely nothing"
         self.defense = 0
+
 
 class TristramRobes(object):
     """
@@ -91,10 +95,10 @@ class Character(object):
     def __str__(self):
         # Define the default string representation of the warrior class
 
-        return ("%s is a lvl %d %s with %d health.") % (self.name,self.level,
-                                                        self.type,self.health)
+        return ("%s is a lvl %d %s with %d health.") % (self.name, self.level,
+                                                        self.type, self.health)
 
-    def equip(self,choice):
+    def equip(self, choice):
         # equips either a weapon or armor and updates the power/def
         # also removes the item from inventory and return a boolean to
         # determine which message to send
@@ -176,7 +180,7 @@ class Character(object):
 
         return False
 
-    def  unequip(self,choice):
+    def unequip(self, choice):
         # unequips item, equips default gear, resets defense/power, places item
         # back in inventory and returns boolean to decide which message to send
         # the user
@@ -242,29 +246,34 @@ class Character(object):
         # determine the offset lengths for all left-side dynamic numbers
         a = len(str(self.health)) + len(str(self.max_health))
         b = len(str(self.exp))
-        c = len(str(self.base_power)) + len(str(self.equipped_weapon.power)) + len(str(self.power))
-        d = len(str(self.base_defense)) + len(str(self.equipped_armor.defense)) + len(str(self.defense))
+        c = len(str(self.base_power)) + \
+            len(str(self.equipped_weapon.power)) + len(str(self.power))
+        d = len(str(self.base_defense)) + \
+            len(str(self.equipped_armor.defense)) + len(str(self.defense))
 
         # multipled spaces and subtracted them by the dynamic length of the left-side Variables
         # this ensures everything stays nicely formatted. Returns a list of strings
         status_screen = ["********************************************************************************",
-                         " Name    :  {0}{1}{2}".format(color["yellow"],self.name,color["reset"]),
-                         " Credits :  {0}{1}{2}".format(color["yellow"],self.credits,color["reset"]),
+                         " Name    :  {0}{1}{2}".format(
+                             color["yellow"], self.name, color["reset"]),
+                         " Credits :  {0}{1}{2}".format(
+                             color["yellow"], self.credits, color["reset"]),
                          " Level   :  {0}{1}{2}    Class :  {3}{4}{5}     Current Room :  {6}{7}{8}".format(color["yellow"],
-                            self.level,color["reset"],color["yellow"],self.type,color["reset"],color["yellow"],self.room.name,color["reset"]),
+                            self.level, color["reset"], color["yellow"], self.type, color["reset"], color["yellow"], self.room.name,color["reset"]),
                          "********************************************************************************",
                          (" Health     :  {0}{1:g}{2}/{3}{4:g}{5}" + " "*(39-a) + "Weapon:  {6}{7}{8}").format(color["red"],
-                         self.health,color["reset"],color["yellow"],self.max_health,color["reset"],color["red"],self.equipped_weapon.name,color["reset"]),
+                         self.health, color["reset"], color["yellow"], self.max_health, color["reset"], color["red"], self.equipped_weapon.name,color["reset"]),
                          (" Experience :  {0}{1}{2}" + " "*(38-b) + "Armor :  {3}{4}{5}").format(color["yellow"],
-                         self.exp,color["reset"],color["red"],self.equipped_armor.name,color["reset"]),
+                                                                                                 self.exp, color["reset"], color["red"], self.equipped_armor.name, color["reset"]),
                          "********************************************************************************",
                          (" Attack Power :  {0}({1}{2}{3})/{4}" + " "*(33-c) + "Critical :  {5}{6}{7}").format(self.base_power,
-                         color["blue"],self.equipped_weapon.power,color["reset"],self.power,color["blue"],self.critical,color["reset"]),
+                         color["blue"], self.equipped_weapon.power, color["reset"], self.power, color["blue"], self.critical, color["reset"]),
                          (" Defense      :  {0}({1}{2}{3})/{4}" + " "*(33-d) + "Crit %   :  {5}{6}{7}").format(self.base_defense,
-                         color["blue"],self.equipped_armor.defense,color["reset"],self.defense,color["blue"],self.crit_chance,color["reset"]),
+                         color["blue"], self.equipped_armor.defense, color["reset"], self.defense, color["blue"], self.crit_chance, color["reset"]),
                          "********************************************************************************"]
 
         return status_screen
+
 
 class Human(Character):
     """
@@ -274,11 +283,11 @@ class Human(Character):
 
     def __init__(self):
         # Generate Warrior specific attributes
-        super(Human,self).__init__()
+        super(Human, self).__init__()
         self.type = "Human"
         self.base_power = 5.
         self.power = self.base_power * self.equipped_weapon.power
-        self.health = max(0,500)
+        self.health = max(0, 500)
         self.max_health = 500.
         self.base_defense = .9
         self.defense = self.base_defense * self.equipped_armor.defense
@@ -290,15 +299,16 @@ class Human(Character):
         self.talent = "Steal"
         self.stealth = .2
 
+
 class Proprietor(Character):
     """
     Creates the Mage class which inherits all of the properties from the
     Character class.
     """
 
-    def __init__(self,name):
-        #Generate Mage specific attributes
-        super(Proprietor,self).__init__()
+    def __init__(self, name):
+        # Generate Mage specific attributes
+        super(Proprietor, self).__init__()
         self.name = name
         self.pk = True
         self.level = 99
@@ -319,35 +329,35 @@ class Proprietor(Character):
         self.crit_chance = 100
         self.spells = {"Spark": 10, "Storm": 12}
 
+
 class Enemy(Character):
     """
     Creates the Rogue class which inherits all of the properties from the
     Character class.
     """
 
-
     def __init__(self):
-        #Generate Rogue specific attributes
-        enemy = random.choice([["Rogue",DefaultWeapon("Dagger")],
-                               ["Ghoul",DefaultWeapon("Grimey Hands")],
-                               ["Tonberry",DefaultWeapon("Knife")],
-                               ["Jabberwocky",DefaultWeapon("Claws")],
-                               ["Gremlin",DefaultWeapon("Teeth")],
-                               ["Troll",DefaultWeapon("Club")],
-                               ["BoogeyMan",DefaultWeapon("Fists")],
-                               ["Dragon",DefaultWeapon("Sharp Claws")]])
-        super(Enemy,self).__init__()
+        # Generate Rogue specific attributes
+        enemy = random.choice([["Rogue", DefaultWeapon("Dagger")],
+                               ["Ghoul", DefaultWeapon("Grimey Hands")],
+                               ["Tonberry", DefaultWeapon("Knife")],
+                               ["Jabberwocky", DefaultWeapon("Claws")],
+                               ["Gremlin", DefaultWeapon("Teeth")],
+                               ["Troll", DefaultWeapon("Club")],
+                               ["BoogeyMan", DefaultWeapon("Fists")],
+                               ["Dragon", DefaultWeapon("Sharp Claws")]])
+        super(Enemy, self).__init__()
         self.type = "Enemy"
         self.name = enemy[0]
         self.equipped_weapon = enemy[1]
-        self.exp = random.choice(range(90,101))
-        self.credits = random.choice(range(0,11))
+        self.exp = random.choice(range(90, 101))
+        self.credits = random.choice(range(0, 11))
         self.pk = True
-        self.base_power = random.choice(range(10,16))
+        self.base_power = random.choice(range(10, 16))
         self.power = self.base_power * self.equipped_weapon.power
-        self.health = float(max(0,random.choice(range(100,200))))
+        self.health = float(max(0, random.choice(range(100, 200))))
         self.max_health = self.health
-        self.base_defense = 1. 
+        self.base_defense = 1.
         self.defense = self.base_defense * self.equipped_armor.defense
         self.evade_chance = 0
         self.magic = 0

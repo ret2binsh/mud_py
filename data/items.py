@@ -51,60 +51,65 @@ class Stationary_Items(object):
         self.equip = False
         self.consume = False
 
+
 class Drink(PickUp_Items):
 
-    def __init__(self,name,description,cure_amount):
-    # Initiate Drink item attributes
-        super(Drink,self).__init__()
+    def __init__(self, name, description, cure_amount):
+        # Initiate Drink item attributes
+        super(Drink, self).__init__()
         self.name = name
         self.cure_amount = cure_amount
-        self.displayName = u"%s%s%s" % (color["white"],name,color["reset"])
+        self.displayName = u"%s%s%s" % (color["white"], name, color["reset"])
         self.description = description
         self.consume = True
         self.healthBoost = .2
 
+
 class Weapon(PickUp_Items):
 
-    def __init__(self,name,description,power):
-    # Initiate Weapon item attributes
-        super(Weapon,self).__init__()
+    def __init__(self, name, description, power):
+        # Initiate Weapon item attributes
+        super(Weapon, self).__init__()
         self.name = name
-        self.displayName = u"%s%s%s" % (color["red"],name,color["reset"])
+        self.displayName = u"%s%s%s" % (color["red"], name, color["reset"])
         self.description = description
         self.power = 1.2 * power
         self.equip = "weapon"
 
+
 class Armor(PickUp_Items):
 
-    def __init__(self,name,description,defense):
-    # Initiate Weapon item attributes
-        super(Armor,self).__init__()
+    def __init__(self, name, description, defense):
+        # Initiate Weapon item attributes
+        super(Armor, self).__init__()
         self.name = name
-        self.displayName = u"%s%s%s" % (color["cyan"],name,color["reset"])
+        self.displayName = u"%s%s%s" % (color["cyan"], name, color["reset"])
         self.description = description
         self.defense = 2 * defense
         self.equip = "armor"
 
+
 class Plot_Item(Stationary_Items):
 
-    def __init__(self,name,description,details):
-    # Initiate Weapon item attributes
-        super(Plot_Item,self).__init__()
+    def __init__(self, name, description, details):
+        # Initiate Weapon item attributes
+        super(Plot_Item, self).__init__()
         self.name = name
-        self.displayName = u"%s%s%s" % (color["yellow"],name,color["reset"])
+        self.displayName = u"%s%s%s" % (color["yellow"], name, color["reset"])
         self.description = description
         self.details = details
 
+
 tier1Weapons = [
-    Weapon("Dagger","A rusty dagger.",1),
-    Weapon("Sword","A boring sword.",1),
-    Weapon("Javelin","A pokey weapon.",1),
-    Weapon("Pistol","A crummy pistol.",1)
-    ]
+    Weapon("Dagger", "A rusty dagger.", 1),
+    Weapon("Sword", "A boring sword.", 1),
+    Weapon("Javelin", "A pokey weapon.", 1),
+    Weapon("Pistol", "A crummy pistol.", 1)
+]
 
 tier1Armor = [
-    Armor("Chain Mail","A heavy set of chain mail.",1),
-    Armor("Leather Hide","Crude garments made from leather.",1),
+    Armor("Chain Mail", "A heavy set of chain mail.", 1),
+    Armor("Leather Hide", "Crude garments made from leather.", 1),
     Armor("Black Tights",
           "\n" +
           "         ,==c==.\n" +
@@ -115,29 +120,31 @@ tier1Armor = [
           "         |__|__|\n" +
           "\nRather tight looking pants.",
           1)
-    ]
+]
 
 tier1Drinks = [
-    Drink("Beer","Warm beer\n+20HP",20),
-    Drink("Wine","Dank wine\n+15HP",15),
-    Drink("Orange Juice","Spoiled orange juice.\n+25HP",25)
-    ]
+    Drink("Beer", "Warm beer\n+20HP", 20),
+    Drink("Wine", "Dank wine\n+15HP", 15),
+    Drink("Orange Juice", "Spoiled orange juice.\n+25HP", 25)
+]
 
 # list of tier1 items. used for random function
-tier1Items = [tier1Armor,tier1Drinks,tier1Weapons]
+tier1Items = [tier1Armor, tier1Drinks, tier1Weapons]
+
 
 def random_items():
     """ Function that seeds the room with a random quantity and type of
     either drink, weapon, or armor items.
     """
 
-    itemsList = []  #list of items to be returned
+    itemsList = []  # list of items to be returned
     # random choice number of items. weighted towards 1 item
-    for i in range(0,random.choice([1,1,1,2,3])):
+    for i in range(0, random.choice([1, 1, 1, 2, 3])):
         itemType = random.choice(tier1Items)
         itemsList.append(random.choice(itemType))
 
     return itemsList
+
 
 def enemy_items():
     """
@@ -146,5 +153,5 @@ def enemy_items():
     """
 
     itemType = random.choice(tier1Items)
-    
+
     return random.choice(itemType)
